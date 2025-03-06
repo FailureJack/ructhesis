@@ -1,43 +1,73 @@
-\chapter{\LaTeX{} 介绍}
-%\section{安装\LaTeX{} }
-%\subsection{Mac OS X}
-%\begin{figure}[htbp]
-%\centering\includegraphics[width=5cm,height=1.32cm]{figures/Logo_2.pdf}
-%\caption[示意图]{用LaTeX画图}
-%\end{figure}
-\LaTeX\footnote{https://zh.wikipedia.org/wiki/LaTeX}（英语发音：/ˈleɪtɛk/ lay-tek或英语发音：/ˈlɑːtɛk/ lah-tek，音译“拉泰赫”），文字形式写作\LaTeX ，是一种基于\TeX\ 的排版系统，由美国电脑学家莱斯利·兰伯特在20世纪80年代初期开发，利用这种格式，即使用户没有排版和程序设计的知识也可以充分发挥由\TeX\ 所提供的强大功能，能在几天，甚至几小时内生成很多具有书籍质量的印刷品。对于生成复杂表格和数学公式，这一点表现得尤为突出。因此它非常适用于生成高印刷质量的科技和数学类文档。这个系统同样适用于生成从简单的信件到完整书籍的所有其他种类的文档。
+\chapter{绪论}
+\section{研究背景和意义}
+近年来，大语言模型（Large Language Models，LLMs）在各个领域的成功应用，已然成为推动人工智能发展的重要趋势。以OpenAI的GPT系列为代表的大模型，不仅在自然语言处理（Natural Language Processing，NLP）领域表现卓越，更逐步被应用于金融、医疗、教育、科学研究等众多行业，成为赋能各行各业的核心技术。
 
-\LaTeX\ 使用\TeX\ 作为它的格式化引擎，当前的版本是\LaTeX 2ε。
-\begin{figure}[htbp]
-\centering
-\subfigure[国际象棋]{ 
-	\label{fig:mini:subfig:a} %% label for first subfigure 
-	\begin{minipage}[b]{0.5\textwidth} 
-	\centering 
-	\fenboard{%
-	r5k1/%
-	1b1p1ppp/%
-	p7/%
-	1p1Q4/%
-	2p1r3/%
-	PP4Pq/%
-	BBP2b1P/%
-	R4R1K w - - 0 20}
-	\mbox{}\showboard
-	\end{minipage}}% 
-\subfigure[化学式]{
-	\label{fig:mini:subfig:b} %% label for second subfigure 
-	\begin{minipage}[b]{0.5\textwidth} 
-	\centering 
-      	\chemfig{
- 	H_3C-[:72]{\color{blue}N}*5(- 
-	*6(-(={\color{red}O})-
-	{\color{blue}N}(-CH_3)-
-	(={\color{red}O})-
-	{\color{blue}N}(-CH_3)-=)--
-	{\color{blue}N}=-)}
-   	 \end{minipage}} 
-\caption{\LaTeX\ 绘图示例} 
-\label{fig:mini:subfig} %% label for entire figure 
-\end{figure}
+大模型的优点在于其强大的生成能力和通用性，但也存在显著的缺点，比如高昂的计算成本、巨大的内存需求以及推理过程中的性能瓶颈。因此，在“大模型时代”，如何优化大模型的推理效率，降低资源消耗，已成为科研界和工业界亟待解决的核心问题。
 
+当前主流的大模型（如GPT系列、Llama等）均为Decoder-Only架构，即只使用Transformer中的解码器（Decoder）做生成\cite{GPT-1,Llama2}。Decoder采用自回归生成方式完成文本生成任务，其推理生成过程主要分为两个阶段：1） 预填充阶段（Prefilling），该阶段会将提示词（Prompt）中所有词元（token）嵌入为词向量并输入Decoder，主要执行GEMM运算2）解码阶段（Decoding），该阶段会逐token地计算和生成，主要执行GEMV运算。
+在“GPT式”大模型的整个推理过程中，生成阶段占据主导地位，有数据表明，其代表性算子GEMV平均占据82.3\%的GPU运行时间，而预填充阶段的代表性算子GEMM的平均耗时只占2\%，剩下的一些非线性算子总占比不到20\%\cite{SamsungHotChips}。这使得GEMV算子成为大模型推理的主要性能瓶颈，针对GEMV的优化对于提升大模型的推理效率至关重要，具有重大研究价值。
+
+与GEMM不同，GEMV的计算过程数据重用性低，矩阵的计算近乎流式，存在大量数据搬移操作，计算访存比低。这些特点决定了其为内存瓶颈任务，使得常用的计算密集型硬件如GPU的利用率低，难以充分发挥其硬件优势。虽然有技术将多个推理请求组成一个批次（batch），进而将将GEMV操作合并成为GEMM操作以提高数据利用率\cite{Orca}，但是在边端场景下，用户数量十分有限，batch size绝大多数情况为1，这时GEMV往往称为系统瓶颈\cite{CellularLogicInMemory}。
+
+存内计算（Processing-in-Memory，PIM）是一种新兴的计算范式，其秉持将计算置于数据侧的以数据为中心的思想，旨在通过将计算单元集成至存储部件附近，以较高的传输带宽存取数据进行计算。采用此种架构的硬件往往能凭借其独有高速传输通道和简单存储结构的具备高存储高带宽和低能耗的优势，能够充分解决传统冯诺依曼计算架构中的内存瓶颈问题。
+
+近些年来许多PIM硬件被设计和提出\cite{SamsungHBMPIM,AxDIMM,AiM,AlibabaPIM,UPMEMHotChips}，在这其中UPMEM是目前较为成熟的商用存算一体硬件，其硬件特点包括：1）高带宽和高存储，聚合带宽能达到TB级别。2）高并行性，拥有2560个DPU，每个DPU 24个线程可以并发控制，能够以极细的粒度分割任务。3）高能效，存算一体架构减少了数据搬运的能耗开销。同时UPMEM也存在一些局限性：1）较弱的计算能力，对于浮点和乘除法缺乏硬件支持。2）通信开销大，与主机或DPU之间通信开销大。
+
+UPMEM的优势使得其特别适合卸载GEMV算子进行加速：高带宽和高存储可以有效解决GEMV算子乃至大模型推理过程中的内存瓶颈问题，同时GEMV中的矩阵和向量可以任意粒度切分且无数据依赖可以充分并行。但是UPMEM较弱的计算能力使得在加速GEMV时不得不做一些设计避免性能劣化。如何从软件角度适配硬件加速，以及如何修改设计硬件优化其应用性能的软硬协同优化方案成为待深入研究的课题。
+
+\section{国内外研究现状}
+
+早在上世纪七十年代左右，存内计算的思想就已经初具雏形\cite{CellularLogicInMemory,LogicInMemory}，其核心思想是试在DRAM的存储单元上增加简单的逻辑电路使得其本身可以进行一些简单的运算。上世纪九十年代，Wulf等人系统性地定义了内存墙（Memory Wall）的概念并对其进行了分析\cite{MemoryWall}。许多学者围绕该问题提出了不同的解决方案。其中，有部分学者提出存内计算（PIM，Processing in Memory）的思想，希望通过在存储器原地进行计算从而减少CPU的访存以达到更高的性能和更低的能耗。在从那开始有不少的工作被提出，如RowClone\cite{RowClone}这篇文章提出在DRAM的同一bank内同时打开多行并利用共享的行缓存器（row buffer）实现行之间的快速复制，这种复制无需CPU参与数据搬移，大大提升了复制的效率。此外Seshadri等人\cite{BitAndOr,Ambit}提出一系列工作，通过利用内存单元本身的模拟特性以及对感应放大器（sense amplifier）的简单修改，实现了快速批量的按位与（AND）、或（OR）、非（NOT）等逻辑操作，计算完全发生在DRAM内部，不占用系统总线。
+
+尽管还有相当一部分此类的工作被提出，但是时代的局限性使得PIM的工作难以落地。一方面是当时的制造工艺无法在内存芯片内集成较为复杂的逻辑单元。另一方面，在内存墙概念被提出的九十年代，互联网的数据量远不如现在庞大，没有弃用原先普通内存，更换造价更加相较高昂PIM型内存的迫切需求。
+
+进入大数据时代以来，数据量逐渐增大，数据密集型场景逐渐增多，大量且频繁数据搬移造成的高延迟和高能耗等问题日渐凸显。此时存内计算被重新提出，其与存储侧计算的思想与大数据时代信息处理的特征不谋而合，重新受到了研究人员的青睐\cite{NDPWorkshop}。
+
+与此同时，硬件方面的新进展为存内计算的复兴提供了坚实的土壤，3D堆叠技术的出现极大程度上解决了此前PIM的逻辑集成难题，使得在同一块面积的芯片上集成更复杂高效的逻辑单元成为可能。3D堆叠技术纵向堆叠内存芯片，形成多层结构：多层数据层堆叠存储数据，底部堆叠逻辑层执行计算，层与层之间通过硅穿孔(Through-Silicon Vias, TSV)TSV形成垂直互联，能够高效传输数据，提供极大的内部存储带宽。
+
+在此背景下，许多工作被提出，比如Junwhan Ahn等人\cite{Tesseract}提出Tesseract使用3D堆叠技术加速大规模的图处理。与此同时由于人工智能浪潮的兴起，许多专用于神经网络的PIM加速芯片也被设计出来，其中较为著名的就是三星的HBM-PIM产品\cite{SamsungHBMPIM}，该产品采用20nmDRAM工艺，使用3D堆叠技术堆叠封装了4层裸芯（Die），每层Die的bank分组内集成了专门用于16位浮点数乘加操作的PIM单元以处理神经网络中的矩阵操作。此外三星的另一个产品AxDIMM\cite{AxDIMM}也采用了存内计算/近存计算的技术，其将DRAM芯片（Chip）和FPGA处理单元集成到一块有着DDR4标准接口的主板上，其主要用于加速推荐模型（recommendation model）中的向量嵌入查找任务（embedding lookup）。海力士也提出过存内加速器AiM\cite{AiM}用于加速AI，与三星的HBM PIM不同的是，AiM基于GDDR6内存，每个bank集成PIM单元，通过设计互连总线和全局缓存实现各个PIM单元的高效通信。在国内方面，阿里也推出过近存计算产品\cite{AlibabaPIM}用于加速AI任务，同样采用的是3D堆叠技术将逻辑Die和数据Die堆叠封装在一起，通过TSV高速传输数据。逻辑Die上分别设计了用于向量排序和矩阵乘法的计算单元用于处理不同类型的任务。
+
+然而上述工作因为各种复杂的原因难以落地使用和量产，甚至部分基于模拟器，使得PIM技术的推广与使用犹如空中楼阁。近几年，一款号称真正可商用的PIM硬件横空出世：UPMEM作为以第一款可以商用的近存计算处理器产品\cite{UPMEMHotChips}，有着更加通用的处理能力、高速的内存带宽、低廉的接入成本以及完备的开发生态。UPMEM本身是一条有着标准DDR4接口的内存插块（DIMM），可以像正常的内存条一样插在通用的Intel服务器上（一个服务器最多可以插入20条UPMEM）。每个UPMEM插块包含两个rank，每个rank有64个数据处理单元（Data Processing Unit，DPU）。每个DPU都拥有一个14级流水的RISC处理器，拥有24个线程。同时每个DPU拥有二级存储结构，包括64KiB的SRAM（称为WRAM）和64MiB的DRAM（称为MRAM）。
+
+有许多工作对UPMEM的硬件特征做了系统且全面的测试\cite{BenchmarkingMutlu,BenchmarkingUPMEM,BenchmarkingUBC,BenchmarkingGermany}，其中，Mutlu等人\cite{BenchmarkingMutlu}的测试工作较为全面且权威。在这些评测中，不难发现UPMEM的硬件优势可以概括为以下几点：1）高存储容量和传输带宽。20条UPMEM共有2560个DPU，其可用内存达到160GB，远超市面上常用显卡的显存，其中MRAM的传输带宽大约为700MB/s，当2560个DPU并行工作其聚合带宽能够达到1.7TB/s；2）高并发和细粒度并发控制， 2560个DPU可以同时工作，每个DPU内部还可以控制24个线程进行更加细粒度的控制，整个PIM系统的并发线程数量能够达到近3万；3）高能效比，UPMEM设备没有复杂的存储结构，减少数据的搬移可以大大降低能耗，测试表明，UPMEM的能效比高于运行相同任务的CPU和GPU\cite{BenchmarkingMutlu}。拥有以上优点的同时，UPMEM的缺点也十分明显：1）硬件资源十分有限，只支持32bit的整数加减法，其他的算术操作包括乘除和，浮点运算都是软件实现，效率较为低下；2）通信效率低，UPMEM与主机端通信的传输效率不高，只有大批量传输连续数据时才能勉强达到DDR4内存的传输带宽，同时DPU之间彼此独立缺乏有效的通信手段，只能通过CPU主动中转数据，效率更加低下。这些硬件特性有优有劣使得任何基于UPMEM构建的应用都要充分利用或避免这些硬件特性。
+
+UPMEM自出现以来有许多研究者以此硬件结合相关应用做出了许多工作，涉及、数据库\cite{Skyline,PIM-Model,PIM-Tree,PIM-Trie,PIM-DB,PIM-Scan,PIM—QueryCompile,PIM-Join}、生物基因\cite{DNAMapping,VariantCalling,RNA-seq,UpPipe,GAPiM}以及人工智能\cite{UPMEMEmbeddingLookups,UPMEMTraditionalML,UPMEMCNN,UPMEMGNN,PIM-DL,SwiftRL,PIM-Opt}等各个领域。其中，UPMEM的高并行和通信效率低的特性使得其非常适合用于加速神经网络的推理。Niloofar Zarif将UPMEM用于embedding lookup任务的卸载\cite{UPMEMEmbeddingLookups}，对于目前较大的嵌入表（embedding table）加速效果尤为明显。Juan Gómez-Luna等人\cite{UPMEMTraditionalML}以简单直接的方式卸载了传统机器学习中的基础模型到UPMEM上，包括线性回归、逻辑回归、决策树、K均值聚类，并做了全面丰富的测试，但是测试结果无一表明这些模型的推理都遭受了严重的计算性能瓶颈。Prangon Das\cite{UPMEMCNN}等人在UPMEM上分别卸载了嵌入二值神经网络（Embedded Binary Neural Network ，eBNN）和YOLOv3（主要是卸载CNN的卷积操作），其主要思想是将卷积神经网络（CNNs）的权重量化到低bit位，再通过查找表（Look Up Table，LUT）查询低bit浮点数乘积，以消除浮点乘法运算，但这会严重降低模型的精度。最与本课题应用 场景相近的工作PIM-DL\cite{PIM-DL}使用UPMEM推理Bert，其通过将矩阵乘法转换为最近邻查找和向量加法，减少了对乘法的需求，从而提高了计算效率。但其最近邻查找是在CPU上完成的，而UPMEM只执行向量加法操作，并没将计算重担完全卸载到UPMEM上。
+
+结合上面的文献不难看出，使用UPMEM推理神经网络的主要难点在于其羸弱的计算能力往往拖累系统整体性能，无法充分发挥PIM架构的高带宽，如何简化和避免复杂的计算是十分值得研究的课题。
+
+\section{研究内容和创新点}
+
+本毕业设计主要内容分为三个主要研究内容：
+\begin{itemize}
+	\item [1)] 
+	基于8bit量化查表的GEMV算子算法优化，根据UPMEM自身硬件特点基于查找表设计GEMV算子，主要优化GEMV对UPMEM各级存储层次的访存策略以达到较高的数据局部性，分别包括在MRAM层面和WRAM层面的优化。
+	\item [2)]
+	基于UPMEM周期精确模拟器的硬件改动优化，根据GEMV查找表等软件实现的特点设计硬件，增加查找表专用FMA指令加速乘积查询，设计SIMD指令支持向量化查表和计算。
+    \item [3)]
+	从四个方面设计基于三个平台CPU（MKL）、GPU（cuBLAS）和UPMEM的一系列对比实验：GEMV算子的整体计算性能，各种优化手段（包括软硬协同）的提升细分测试（breakdown），UPMEM的扩展性实验以及和CPU、GPU等多个平台的能效比实验，综合全面论证优化有效性。
+\end{itemize}
+
+同时，主要创新点为以下三个：
+\begin{itemize}
+	\item [1)] 
+	通过文献阅读充分了解了UPMEM硬件的特点，设计基于查找表的向量矩阵乘法，通过分块载入查找表到高速内存减少DMA访问次数增强高速内存的数据局部性，进行矩阵和向量的行列重排适应不同大小的矩阵减少访问查找表的次数并减少数据从寄存器流出，增强寄存器的数据局部性，提升GEMV算子的性能。
+	\item [2)]
+	基于UPMEM的周期精确模拟器uPimulator修改硬件，增加查找表专用FMA指令用于高效快速查询乘积，向量化访存减少读放大问题，设计SIMD指令访存向量化提高读写效率。
+    \item [3)]
+	对软硬协同优化设计了详细的基本测试，在CPU和GPU以及UPMEM三个平台上，进行了包括对总GEMV算子计算性能的测试和详尽优化细分测试（breakdown）测试，此外还根据硬件特性做了扩展性测试和能效比测试，充分论证软硬协同优化的有效性。
+\end{itemize}
+
+\section{论文组织结构}
+本文共六个章节组成，其中每个章节的主要内容如下：
+
+第1章是全文的绪论。主要介绍了本文研究背景与意义、国内外研究现状、研究内容与创新点，并在最后介绍了全文的组织结构。
+
+第2章是相关工作。主要进行研究工作的综述，分别介绍了大模型推理加速相关技术和工作以及近存计算研究现状，梳理了已有文献的研究情况，从理论起源和内涵出发到研究现状。
+
+第3章是基于模型量化和查找表的矩阵向量乘软件优化。本章基于UPMEM硬件平台对GEMV算子提出了相关软件的设计和优化算法，基础算法是基于分块查找表的载入算法，更进一步对不同矩阵尺寸进行了设计，为窄和宽矩阵分别做出行重排和列重排的优化算法。
+
+第4章是基于近存计算模拟器的矩阵向量乘硬件优化。本章主要选取了UPMEM的周期精确模拟器PIMulator对UPMEM做硬件改动，包括增加查找表专用的FMA指令加速查表乘积累加的计算，以及增加SIMD单元支持向量化查表和访存。
+
+第5章是实验结果与分析。本章主要设计了四个实验包括不同平台GEMV算子的总吞吐、总能效比、各种优化手段的细分（breakdown）以及算子的扩展性等等，通过分析实验结果说明研究工作的有效性，并对硬件本身特性做进一步分析和展望。
+
+第6章是总结与展望。本章将对全文内容进行总结。本章首先对全文研究结果进行总结。接着，本章阐述了本研究在理论和实践贡献。最后，本章总结了本研究的不足，并提出了未来工作展望。

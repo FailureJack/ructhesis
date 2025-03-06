@@ -40,25 +40,22 @@
 %UseOutput in the format of Algorithm
 \algnewcommand\algorithmicforeach{\textbf{for each}}
 \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
-
-
-
 %将封面信息补全，相关专业名称过长的请在文字前添加命令\ziju{-0.15}
 %文头
-\sign{中国人民大学本科毕业论文}
-%\sign{硕士学位论文}
+% \sign{中国人民大学本科毕业论文}
+\sign{硕士学位论文}
 %\sign{博士学位论文}
 
 
 
 %以下信息本科研究生都需要补全
-\title{中国人民大学LaTeX模板}%论文题名
-\author{XXX}%作者
-\school{XX学院}%学院
-\field{XXXX}%专业
-\studentid{2012202000}%学号
-\advisor{XXX}%指导老师
-\date{20XX年XX月XX日}
+\title{\ziju{-0.1}基于近存计算技术的矩阵向量乘算子优化研究}%论文题名
+\author{张魁耀辉}%作者
+\school{信息学院}%学院
+\field{大数据技术与工程}%专业
+\studentid{2023103756}%学号
+\advisor{王晶}%指导老师
+\date{2025年05月01日}
 
 
 %以下本科填写
@@ -69,12 +66,29 @@
 
 
 %以下研究生填写
-\etitle{LaTeX template of Renmin university of China}%英文题目
+\etitle{\ziju{-0.1}Research on Generalized Matrix-Vector Multiplication Operator Optimization Based on Processing-in-Memory Technology}%英文题目
 \keywords{\TeX{}}%论文主题词
 %摘要关键词
-\keywordzh{中文摘要关键词}%中文摘要关键词
-\keyworden{English\qquad template}%英文摘要关键词
+\keywordzh{近数计算 \quad 矩阵向量乘 \quad 查找表}%中文摘要关键词
+\keyworden{Processing-in-Memory \qquad GEMV \qquad Lookup-Table}%英文摘要关键词
 
+\lstset{
+    language=c++, % 设置语言
+	basicstyle=\ttfamily, % 设置字体族
+	breaklines=true, % 自动换行
+	keywordstyle=\bfseries\color{NavyBlue}, % 设置关键字为粗体，颜色为 NavyBlue
+	morekeywords={}, % 设置更多的关键字，用逗号分隔
+	emph={self}, % 指定强调词，如果有多个，用逗号隔开
+    emphstyle=\bfseries\color{Rhodamine}, % 强调词样式设置
+    commentstyle=\itshape\color{black!50!white}, % 设置注释样式，斜体，浅灰色
+    stringstyle=\bfseries\color{PineGreen!90!black}, % 设置字符串样式
+    columns=flexible,
+    numbers=left, % 显示行号在左边
+    numbersep=2em, % 设置行号的具体位置
+    numberstyle=\footnotesize, % 缩小行号
+    frame=single, % 边框
+    framesep=1em % 设置代码与边框的距离
+}
 
 %
 \begin{document}
@@ -117,7 +131,9 @@
 \include{chap/chapter1}
 \include{chap/chapter2}
 \include{chap/chapter3}
-\input{chap/chapter4}%要插入本科签名的最后一个章节,插入命令使用\input{}
+\include{chap/chapter4}
+\include{chap/chapter5}
+\input{chap/chapter6}%要插入本科签名的最后一个章节,插入命令使用\input{}
 
 %本科签名
 %\autograph

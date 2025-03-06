@@ -1,55 +1,991 @@
-@book{knuth1986texbook,
-  title={The texbook},
-  author={Knuth, Donald Ervin and Bibby, Duane},
-  volume={1993},
-  year={1986},
-  publisher={Addison-Wesley Reading, Mass.}
+@inproceedings{Transformer,
+  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, \L ukasz and Polosukhin, Illia},
+  booktitle = {Advances in Neural Information Processing Systems},
+  editor    = {I. Guyon and U. Von Luxburg and S. Bengio and H. Wallach and R. Fergus and S. Vishwanathan and R. Garnett},
+  pages     = {},
+  publisher = {Curran Associates, Inc.},
+  title     = {Attention is All you Need},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf},
+  volume    = {30},
+  year      = {2017}
 }
-@book{patashnik1988designing,
-  title={Designing BIBTEX styles},
-  author={Patashnik, Oren},
-  year={1988},
-  publisher={February}
+
+@inproceedings{Bert,
+  title     = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+  author    = {Devlin, Jacob  and
+               Chang, Ming-Wei  and
+               Lee, Kenton  and
+               Toutanova, Kristina},
+  editor    = {Burstein, Jill  and
+               Doran, Christy  and
+               Solorio, Thamar},
+  booktitle = {Proceedings of the 2019 Conference of the North {A}merican Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers)},
+  month     = jun,
+  year      = {2019},
+  address   = {Minneapolis, Minnesota},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/N19-1423/},
+  doi       = {10.18653/v1/N19-1423},
+  pages     = {4171--4186},
+  abstract  = {We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models (Peters et al., 2018a; Radford et al., 2018), BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5 (7.7 point absolute improvement), MultiNLI accuracy to 86.7{\%} (4.6{\%} absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).}
 }
-@book{lamport1985i1,
-  title={I1 (\LaTeX)---A Document},
-  author={Lamport, Leslie},
-  volume={410},
-  year={1985},
-  publisher={pub-AW}
+
+@misc{T5,
+  title         = {Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer},
+  author        = {Colin Raffel and Noam Shazeer and Adam Roberts and Katherine Lee and Sharan Narang and Michael Matena and Yanqi Zhou and Wei Li and Peter J. Liu},
+  year          = {2023},
+  eprint        = {1910.10683},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.LG},
+  url           = {https://arxiv.org/abs/1910.10683}
 }
-@manual{patashnik2010designing,
-  title={Designing BIBTEX styles. btxhak. pdf},
-  author={Patashnik, O},
-  year={2010}
+
+@inproceedings{GPT-1,
+  title  = {Improving Language Understanding by Generative Pre-Training},
+  author = {Alec Radford and Karthik Narasimhan},
+  year   = {2018},
+  url    = {https://api.semanticscholar.org/CorpusID:49313245}
 }
-@article{陈浩元2005著录文后参考文献的规则及注意事项,
-  title={著录文后参考文献的规则及注意事项},
-  author={陈浩元},
-  journal={编辑学报},
-  volume={17},
-  number={6},
-  pages={413--415},
-  year={2005}
+
+@inproceedings{GPT-2,
+  title  = {Language Models are Unsupervised Multitask Learners},
+  author = {Alec Radford and Jeff Wu and Rewon Child and David Luan and Dario Amodei and Ilya Sutskever},
+  year   = {2019},
+  url    = {https://api.semanticscholar.org/CorpusID:160025533}
 }
-@article{Oetiker2011The,
-  title={The Not So Short Introduction to LATEX2ε Or L ATEX 2ε in 139 minutes},
-  author={Oetiker, Tobias and Partl, Hubert and Hyna, Irene and Schlegl, Elisabeth and Oetiker, Tobias and Partl, Hubert and Hyna, Irene and Schlegl, Elisabeth},
-  journal={Myweb.wit.edu},
-  year={2011},
+
+@inproceedings{GPT-3,
+  author    = {Brown, Tom B. and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and Agarwal, Sandhini and Herbert-Voss, Ariel and Krueger, Gretchen and Henighan, Tom and Child, Rewon and Ramesh, Aditya and Ziegler, Daniel M. and Wu, Jeffrey and Winter, Clemens and Hesse, Christopher and Chen, Mark and Sigler, Eric and Litwin, Mateusz and Gray, Scott and Chess, Benjamin and Clark, Jack and Berner, Christopher and McCandlish, Sam and Radford, Alec and Sutskever, Ilya and Amodei, Dario},
+  title     = {Language models are few-shot learners},
+  year      = {2020},
+  isbn      = {9781713829546},
+  publisher = {Curran Associates Inc.},
+  address   = {Red Hook, NY, USA},
+  abstract  = {We demonstrate that scaling up language models greatly improves task-agnostic, few-shot performance, sometimes even becoming competitive with prior state-of-the-art fine-tuning approaches. Specifically, we train GPT-3, an autoregressive language model with 175 billion parameters, 10x more than any previous non-sparse language model, and test its performance in the few-shot setting. For all tasks, GPT-3 is applied without any gradient updates or fine-tuning, with tasks and few-shot demonstrations specified purely via text interaction with the model. GPT-3 achieves strong performance on many NLP datasets, including translation, question-answering, and cloze tasks. We also identify some datasets where GPT-3's few-shot learning still struggles, as well as some datasets where GPT-3 faces methodological issues related to training on large web corpora.},
+  booktitle = {Proceedings of the 34th International Conference on Neural Information Processing Systems},
+  articleno = {159},
+  numpages  = {25},
+  location  = {Vancouver, BC, Canada},
+  series    = {NIPS '20}
 }
-@article{Goossens1993The,
-  title={The LaTeX Companion},
-  author={Goossens, Michel},
-  journal={Annual Acm Symposium on Principles of Distributed Computing},
-  volume={66},
-  number={3},
-  pages={985–986},
-  year={1993},
+
+@misc{Zero-Shot,
+  title         = {What Language Model Architecture and Pretraining Objective Work Best for Zero-Shot Generalization?},
+  author        = {Thomas Wang and Adam Roberts and Daniel Hesslow and Teven Le Scao and Hyung Won Chung and Iz Beltagy and Julien Launay and Colin Raffel},
+  year          = {2022},
+  eprint        = {2204.05832},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2204.05832}
 }
-@article{Reckdahl1997Using,
-  title={Using Imported Graphics in LATEX2e},
-  author={Reckdahl, Keith},
-  journal={World Wide Web Site Version},
-  year={1997},
+
+@misc{Few-Shot,
+      title={Why Can GPT Learn In-Context? Language Models Implicitly Perform Gradient Descent as Meta-Optimizers}, 
+      author={Damai Dai and Yutao Sun and Li Dong and Yaru Hao and Shuming Ma and Zhifang Sui and Furu Wei},
+      year={2023},
+      eprint={2212.10559},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2212.10559}, 
+}
+
+@article{Llama2,
+  title   = {Llama 2: Open Foundation and Fine-Tuned Chat Models},
+  author  = {Hugo Touvron and Louis Martin and Kevin R. Stone and Peter Albert and Amjad Almahairi and Yasmine Babaei and Nikolay Bashlykov and Soumya Batra and Prajjwal Bhargava and Shruti Bhosale and Daniel M. Bikel and Lukas Blecher and Cristian Cant{\'o}n Ferrer and Moya Chen and Guillem Cucurull and David Esiobu and Jude Fernandes and Jeremy Fu and Wenyin Fu and Brian Fuller and Cynthia Gao and Vedanuj Goswami and Naman Goyal and Anthony S. Hartshorn and Saghar Hosseini and Rui Hou and Hakan Inan and Marcin Kardas and Viktor Kerkez and Madian Khabsa and Isabel M. Kloumann and A. V. Korenev and Punit Singh Koura and Marie-Anne Lachaux and Thibaut Lavril and Jenya Lee and Diana Liskovich and Yinghai Lu and Yuning Mao and Xavier Martinet and Todor Mihaylov and Pushkar Mishra and Igor Molybog and Yixin Nie and Andrew Poulton and Jeremy Reizenstein and Rashi Rungta and Kalyan Saladi and Alan Schelten and Ruan Silva and Eric Michael Smith and R. Subramanian and Xia Tan and Binh Tang and Ross Taylor and Adina Williams and Jian Xiang Kuan and Puxin Xu and Zhengxu Yan and Iliyan Zarov and Yuchen Zhang and Angela Fan and Melissa Hall Melanie Kambadur and Sharan Narang and Aur{\'e}lien Rodriguez and Robert Stojnic and Sergey Edunov and Thomas Scialom},
+  journal = {ArXiv},
+  year    = {2023},
+  volume  = {abs/2307.09288},
+  url     = {https://api.semanticscholar.org/CorpusID:259950998}
+}
+
+@inproceedings{SamsungHotChips,
+  author    = {Kim, Jin Hyun and Ro, Yuhwan and So, Jinin and Lee, Sukhan and Kang, Shin-haeng and Cho, YeonGon and Kim, Hyeonsu and Kim, Byeongho and Kim, Kyungsoo and Park, Sangsoo and Kim, Jin-Seong and Cha, Sanghoon and Lee, Won-Jo and Jung, Jin and Lee, Jong-Geon and Lee, Jieun and Song, JoonHo and Lee, Seungwon and Cho, Jeonghyeon and Yu, Jaehoon and Sohn, Kyomin},
+  booktitle = {2023 IEEE Hot Chips 35 Symposium (HCS)},
+  title     = {Samsung PIM/PNM for Transfmer Based AI : Energy Efficiency on PIM/PNM Cluster},
+  year      = {2023},
+  volume    = {},
+  number    = {},
+  pages     = {1-31},
+  keywords  = {Energy efficiency;Artificial intelligence},
+  doi       = {10.1109/HCS59251.2023.10254711}
+}
+
+@misc{LLMInferSurveyTsingHua,
+  title         = {A Survey on Efficient Inference for Large Language Models},
+  author        = {Zixuan Zhou and Xuefei Ning and Ke Hong and Tianyu Fu and Jiaming Xu and Shiyao Li and Yuming Lou and Luning Wang and Zhihang Yuan and Xiuhong Li and Shengen Yan and Guohao Dai and Xiao-Ping Zhang and Yuhan Dong and Yu Wang},
+  year          = {2024},
+  eprint        = {2404.14294},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2404.14294}
+}
+
+@inproceedings{LLMINT8,
+  author    = {Dettmers, Tim and Lewis, Mike and Belkada, Younes and Zettlemoyer, Luke},
+  title     = {LLM.int8(): 8-bit matrix multiplication for transformers at scale},
+  year      = {2022},
+  isbn      = {9781713871088},
+  publisher = {Curran Associates Inc.},
+  address   = {Red Hook, NY, USA},
+  abstract  = {Large language models have been widely adopted but require significant GPU memory for inference. We develop a procedure for Int8 matrix multiplication for feed-forward and attention projection layers in transformers, which cut the memory needed for inference by half while retaining full precision performance. With our method, a 175B parameter 16/32-bit checkpoint can be loaded, converted to Int8, and used immediately without performance degradation. This is made possible by understanding and working around properties of highly systematic emergent features in transformer language models that dominate attention and transformer predictive performance. To cope with these features, we develop a two-part quantization procedure, <b>LLM.int8()</b>. We first use vector-wise quantization with separate normalization constants for each inner product in the matrix multiplication, to quantize most of the features. However, for the emergent outliers, we also include a new mixed-precision decomposition scheme, which isolates the outlier feature dimensions into a 16-bit matrix multiplication while still more than 99.9\% of values are multiplied in 8-bit. Using LLM.int8(), we show empirically it is possible to perform inference in LLMs with up to 175B parameters without any performance degradation. This result makes such models much more accessible, for example making it possible to use OPT-175B/BLOOM on a single server with consumer GPUs. We open source our software.},
+  booktitle = {Proceedings of the 36th International Conference on Neural Information Processing Systems},
+  articleno = {2198},
+  numpages  = {15},
+  location  = {New Orleans, LA, USA},
+  series    = {NIPS '22}
+}
+
+@inproceedings{SmoothQuant,
+  author    = {Xiao, Guangxuan and Lin, Ji and Seznec, Mickael and Wu, Hao and Demouth, Julien and Han, Song},
+  title     = {SmoothQuant: accurate and efficient post-training quantization for large language models},
+  year      = {2023},
+  publisher = {JMLR.org},
+  abstract  = {Large language models (LLMs) show excellent performance but are compute- and memoryintensive. Quantization can reduce memory and accelerate inference. However, existing methods cannot maintain accuracy and hardware efficiency at the same time. We propose SmoothQuant, a training-free, accuracy-preserving, and general-purpose post-training quantization (PTQ) solution to enable 8-bit weight, 8-bit activation (W8A8) quantization for LLMs. Based on the fact that weights are easy to quantize while activations are not, SmoothQuant smooths the activation outliers by offline migrating the quantization difficulty from activations to weights with a mathematically equivalent transformation. SmoothQuant enables an INT8 quantization of both weights and activations for all the matrix multiplications in LLMs, including OPT, BLOOM, GLM, MT-NLG, and LLaMA family. We demonstrate up to 1.56\texttimes{} speedup and 2\texttimes{} memory reduction for LLMs with negligible loss in accuracy. SmoothQuant enables serving 530B LLM within a single node. Our work offers a turn-key solution that reduces hardware costs and democratizes LLMs.},
+  booktitle = {Proceedings of the 40th International Conference on Machine Learning},
+  articleno = {1585},
+  numpages  = {13},
+  location  = {Honolulu, Hawaii, USA},
+  series    = {ICML'23}
+}
+
+@article{AWQ,
+  author     = {Lin, Ji and Tang, Jiaming and Tang, Haotian and Yang, Shang and Xiao, Guangxuan and Han, Song},
+  title      = {AWQ: Activation-aware Weight Quantization for On-Device LLM Compression and Acceleration},
+  year       = {2025},
+  issue_date = {December 2024},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {28},
+  number     = {4},
+  issn       = {2375-0529},
+  url        = {https://doi.org/10.1145/3714983.3714987},
+  doi        = {10.1145/3714983.3714987},
+  abstract   = {Large language models (LLMs) have transformed numerous AI applications. On-device LLM is becoming increasingly important: running LLMs locally on edge devices can reduce cloud computing costs and protect users' privacy. However, the astronomical model size and the limited hardware resources pose significant deployment challenges. To solve these issues, we propose Activation-aware Weight Quantization (AWQ) and TinyChat, an algorithm-system full-stack solution for efficient on-device LLM deployment. AWQ is a novel quantization method that identifies and protects salient weights based on activation distribution, significantly reducing model size while preserving performance. TinyChat, an optimized inference framework, translates AWQ's theoretical memory savings into practical speedups through techniques such as on-the-fly dequantization, SIMD-aware weight packing, and kernel fusion. Together, they enable 4x model size reduction and 3-4x acceleration across various edge platforms, from high-end desktop GPUs to resource-constrained IoT devices. This solution democratizes on-device LLM deployment, offering privacy-preserving, low-latency AI capabilities across a wide range of applications.},
+  journal    = {GetMobile: Mobile Comp. and Comm.},
+  month      = jan,
+  pages      = {12–17},
+  numpages   = {6}
+}
+
+@misc{GPTQ,
+  title         = {GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers},
+  author        = {Elias Frantar and Saleh Ashkboos and Torsten Hoefler and Dan Alistarh},
+  year          = {2023},
+  eprint        = {2210.17323},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.LG},
+  url           = {https://arxiv.org/abs/2210.17323}
+}
+
+@inproceedings{OBQ,
+  author    = {Frantar, Elias and Singh, Sidak Pal and Alistarh, Dan},
+  title     = {Optimal brain compression: a framework for accurate post-training quantization and pruning},
+  year      = {2022},
+  isbn      = {9781713871088},
+  publisher = {Curran Associates Inc.},
+  address   = {Red Hook, NY, USA},
+  abstract  = {We consider the problem of model compression for deep neural networks (DNNs) in the challenging one-shot/post-training setting, in which we are given an accurate trained model, and must compress it without any retraining, based only on a small amount of calibration input data. This problem has become popular in view of the emerging software and hardware support for executing models compressed via pruning and/or quantization with speedup, and well-performing solutions have been proposed independently for both compression approaches. In this paper, we introduce a new compression framework which covers both weight pruning and quantization in a unified setting, is time- and space-efficient, and considerably improves upon the practical performance of existing post-training methods. At the technical level, our approach is based on an exact and efficient realization of the classical Optimal Brain Surgeon (OBS) framework of [LeCun, Denker, and Solla, 1990] extended to also cover weight quantization at the scale of modern DNNs. From the practical perspective, our experimental results show that it can improve significantly upon the compression-accuracy trade-offs of existing post-training methods, and that it can enable the accurate compound application of both pruning and quantization in a post-training setting.},
+  booktitle = {Proceedings of the 36th International Conference on Neural Information Processing Systems},
+  articleno = {323},
+  numpages  = {14},
+  location  = {New Orleans, LA, USA},
+  series    = {NIPS '22}
+}
+
+@inproceedings{ZeroQuant1,
+  author    = {Yao, Zhewei and Aminabadi, Reza Yazdani and Zhang, Minjia and Wu, Xiaoxia and Li, Conglong and He, Yuxiong},
+  title     = {ZeroQuant: efficient and affordable post-training quantization for large-scale transformers},
+  year      = {2022},
+  isbn      = {9781713871088},
+  publisher = {Curran Associates Inc.},
+  address   = {Red Hook, NY, USA},
+  abstract  = {How to efficiently serve ever-larger trained natural language models in practice has become exceptionally challenging even for powerful cloud servers due to their prohibitive memory/computation requirements. In this work, we present an efficient and affordable post-training quantization approach to compress large Transformer-based models, termed as ZeroQuant. ZeroQuant is an end-to-end quantization and inference pipeline with three main components: (1) a fine-grained hardware-friendly quantization scheme for both weight and activations; (2) a novel affordable layer-by-layer knowledge distillation algorithm (LKD) even without the access to the original training data; (3) a highly-optimized quantization system backend support to remove the quantization/dequantization overhead. As such, we are able to show that: (1) ZeroQuant can reduce the precision for weights and activations to INT8 in a cost-free way for both BERT and GPT-3-style models with minimal accuracy impact, which leads to up to 5.19x/4.16x speedup on those models compared to FP16 inference; (2) ZeroQuant plus LKD affordably quantize the weights in the fully-connected module to INT4 along with INT8 weights in the attention module and INT8 activations, resulting in 3x memory footprint reduction compared to the FP16 model; (3) ZeroQuant can be directly applied to two of the largest open-sourced language models, including GPT-J6B and GPT-NeoX20B, for which our INT8 model achieves similar accuracy as the FP16 model but achieves up to 5.2x better efficiency.},
+  booktitle = {Proceedings of the 36th International Conference on Neural Information Processing Systems},
+  articleno = {1970},
+  numpages  = {16},
+  location  = {New Orleans, LA, USA},
+  series    = {NIPS '22}
+}
+
+@article{ZeroQuant2,
+  title        = {Exploring Post-training Quantization in LLMs from Comprehensive Study to Low Rank Compensation},
+  volume       = {38},
+  url          = {https://ojs.aaai.org/index.php/AAAI/article/view/29908},
+  doi          = {10.1609/aaai.v38i17.29908},
+  abstractnote = {Post-training quantization (PTQ) has emerged as a promising technique for mitigating memory consumption and computational costs in large language models (LLMs). However, a systematic examination of various quantization schemes, model families, and quantization bit precision has been absent from the literature. In this paper, we conduct a comprehensive analysis of these factors by investigating the effects of PTQ on weight-only, activation-only, and weight-and-activation quantization using diverse methods such as round-to-nearest (RTN), GPTQ, ZeroQuant, and their variants. We apply these methods to two distinct model families with parameters ranging from 125M to 176B. Our contributions include: (1) a sensitivity analysis revealing that activation quantization is generally more susceptible to weight quantization, with smaller models often outperforming larger models in terms of activation quantization; (2) an evaluation and comparison of existing PTQ methods to optimize model size reduction while minimizing the impact on accuracy, revealing that none of the current methods can achieve the original model quality for quantization with either INT4-weight or INT4-weight-and-INT8-activation; (3) based on these insights, we propose an optimized method called Low-Rank Compensation (LoRC), which employs low-rank matrices to enhance model quality recovery with a minimal increase in model size.},
+  number       = {17},
+  journal      = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  author       = {Yao, Zhewei and Wu, Xiaoxia and Li, Cheng and Youn, Stephen and He, Yuxiong},
+  year         = {2024},
+  month        = {03},
+  pages        = {19377-19385}
+}
+
+@misc{ZeroQuantFP,
+      title={ZeroQuant-FP: A Leap Forward in LLMs Post-Training W4A8 Quantization Using Floating-Point Formats}, 
+      author={Xiaoxia Wu and Zhewei Yao and Yuxiong He},
+      year={2023},
+      eprint={2307.09782},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2307.09782}, 
+}
+
+@article{Strassen,
+  author  = {Strassen, Volker},
+  title   = {Gaussian elimination is not optimal},
+  journal = {Numerische Mathematik},
+  year    = {1969},
+  month   = {08},
+  day     = {01},
+  volume  = {13},
+  number  = {4},
+  pages   = {354-356},
+  issn    = {0945-3245},
+  doi     = {10.1007/BF02165411},
+  url     = {https://doi.org/10.1007/BF02165411}
+}
+
+@inproceedings{Cuda,
+  author    = {Luebke, David},
+  booktitle = {2008 5th IEEE International Symposium on Biomedical Imaging: From Nano to Macro},
+  title     = {CUDA: Scalable parallel programming for high-performance scientific computing},
+  year      = {2008},
+  volume    = {},
+  number    = {},
+  pages     = {836-838},
+  keywords  = {Parallel programming;Scientific computing;Computer architecture;Biomedical computing;Computer graphics;Workstations;Multicore processing;Central Processing Unit;Marine vehicles;Yarn},
+  doi       = {10.1109/ISBI.2008.4541126}
+}
+
+@article{TensorCore,
+  author   = {Choquette, Jack and Gandhi, Wishwesh and Giroux, Olivier and Stam, Nick and Krashinsky, Ronny},
+  journal  = {IEEE Micro},
+  title    = {NVIDIA A100 Tensor Core GPU: Performance and Innovation},
+  year     = {2021},
+  volume   = {41},
+  number   = {2},
+  pages    = {29-35},
+  keywords = {Graphics processing units;Tensors;Bandwidth;Throughput;Parallel processing;Benchmark testing;Artificial intelligence;GPU;A100;NVLink;Deep Learning;Tensor Core;CUDA;C++20},
+  doi      = {10.1109/MM.2021.3061394}
+}
+
+@misc{IntelAVX,
+  title         = {Performance of SSE and AVX Instruction Sets},
+  author        = {Hwancheol Jeong and Sunghoon Kim and Weonjong Lee and Seok-Ho Myung},
+  year          = {2012},
+  eprint        = {1211.0820},
+  archiveprefix = {arXiv},
+  primaryclass  = {hep-lat},
+  url           = {https://arxiv.org/abs/1211.0820}
+}
+
+@article{CellularLogicInMemory,
+  author   = {Kautz, W.H.},
+  journal  = {IEEE Transactions on Computers},
+  title    = {Cellular Logic-in-Memory Arrays},
+  year     = {1969},
+  volume   = {C-18},
+  number   = {8},
+  pages    = {719-727},
+  keywords = {Cellular logic, large-scale integration, logic arrays logic in memory, push-down memory, sorting, switching functions.},
+  doi      = {10.1109/T-C.1969.222754}
+}
+
+@article{LogicInMemory,
+  author   = {Stone, Harold S.},
+  journal  = {IEEE Transactions on Computers},
+  title    = {A Logic-in-Memory Computer},
+  year     = {1970},
+  volume   = {C-19},
+  number   = {1},
+  pages    = {73-78},
+  keywords = {Computers;Logic arrays;Microelectronics;Memory management;Adders;Magnetic memory;Complexity theory;Cache memories;computer architecture;logic-in-memory;microelectronic memories;unconventional computer systems},
+  doi      = {10.1109/TC.1970.5008902}
+}
+
+@article{MemoryWall,
+  author     = {Wulf, Wm. A. and McKee, Sally A.},
+  title      = {Hitting the memory wall: implications of the obvious},
+  year       = {1995},
+  issue_date = {March 1995},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {23},
+  number     = {1},
+  issn       = {0163-5964},
+  url        = {https://doi.org/10.1145/216585.216588},
+  doi        = {10.1145/216585.216588},
+  journal    = {SIGARCH Comput. Archit. News},
+  month      = mar,
+  pages      = {20–24},
+  numpages   = {5}
+}
+
+@article{MicroArchitecturePIM,
+  author   = {Gokhale, M. and Holmes, B. and Iobst, K.},
+  journal  = {Computer},
+  title    = {Processing in memory: the Terasys massively parallel PIM array},
+  year     = {1995},
+  volume   = {28},
+  number   = {4},
+  pages    = {23-31},
+  keywords = {Workstations;Application software;Supercomputers;Random access memory;Prototypes;Costs;Computer architecture;Sun;Degradation},
+  doi      = {10.1109/2.375174}
+}
+
+@inproceedings{RowClone,
+  author    = {Seshadri, Vivek and Kim, Yoongu and Fallin, Chris and Lee, Donghyuk and Ausavarungnirun, Rachata and Pekhimenko, Gennady and Luo, Yixin and Mutlu, Onur and Gibbons, Phillip B. and Kozuch, Michael A. and Mowry, Todd C.},
+  booktitle = {2013 46th Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)},
+  title     = {RowClone: Fast and energy-efficient in-DRAM bulk data copy and initialization},
+  year      = {2013},
+  volume    = {},
+  number    = {},
+  pages     = {185-197},
+  keywords  = {Memory management;DRAM chips;Bandwidth;System performance;Decoding;Energy efficiency;DRAM;Page Copy;Page Initialization;Memory Bandwidth;Performance;Energy;In-Memory Processing;Bulk Operations},
+  doi       = {}
+}
+
+@article{BitAndOr,
+  author   = {Seshadri, Vivek and Hsieh, Kevin and Boroum, Amirali and Lee, Donghyuk and Kozuch, Michael A. and Mutlu, Onur and Gibbons, Phillip B. and Mowry, Todd C.},
+  journal  = {IEEE Computer Architecture Letters},
+  title    = {Fast Bulk Bitwise AND and OR in DRAM},
+  year     = {2015},
+  volume   = {14},
+  number   = {2},
+  pages    = {127-131},
+  keywords = {Random access memory;Throughput;DRAM;Program processors;Capacitors;Computer architecture;Decoding;DRAM memory, bitwise AND/OR, performance},
+  doi      = {10.1109/LCA.2015.2434872}
+}
+
+@inproceedings{Ambit,
+  author    = {Seshadri, Vivek and Lee, Donghyuk and Mullins, Thomas and Hassan, Hasan and Boroumand, Amirali and Kim, Jeremie and Kozuch, Michael A. and Mutlu, Onur and Gibbons, Phillip B. and Mowry, Todd C.},
+  booktitle = {2017 50th Annual IEEE/ACM International Symposium on Microarchitecture (MICRO)},
+  title     = {Ambit: In-Memory Accelerator for Bulk Bitwise Operations Using Commodity DRAM Technology},
+  year      = {2017},
+  volume    = {},
+  number    = {},
+  pages     = {273-287},
+  keywords  = {Random access memory;Bandwidth;Databases;Throughput;Acceleration;Decoding;Inverters;Bulk Bitwise Operations;Processing-in-memory;DRAM;Memory Bandwidth;Performance;Energy;Databases},
+  doi       = {}
+}
+
+@article{NDPWorkshop,
+  author   = {Balasubramonian, Rajeev and Chang, Jichuan and Manning, Troy and Moreno, Jaime H. and Murphy, Richard and Nair, Ravi and Swanson, Steven},
+  journal  = {IEEE Micro},
+  title    = {Near-Data Processing: Insights from a MICRO-46 Workshop},
+  year     = {2014},
+  volume   = {34},
+  number   = {4},
+  pages    = {36-42},
+  keywords = {Computer architecture;Big data;Bandwidth allocation;Costs;Computational modeling;History;Distributed databases;near-data processing;big data;data movement;history of computing},
+  doi      = {10.1109/MM.2014.55}
+}
+
+@inproceedings{EnergyCost,
+  author    = {Kestor, Gokcen and Gioiosa, Roberto and Kerbyson, Darren J. and Hoisie, Adolfy},
+  booktitle = {2013 IEEE International Symposium on Workload Characterization (IISWC)},
+  title     = {Quantifying the energy cost of data movement in scientific applications},
+  year      = {2013},
+  volume    = {},
+  number    = {},
+  pages     = {56-65},
+  keywords  = {Benchmark testing;Energy measurement;Prefetching;Energy consumption;Registers;Power demand;Fans},
+  doi       = {10.1109/IISWC.2013.6704670}
+}
+
+@inproceedings{Tesseract,
+  author    = {Ahn, Junwhan and Hong, Sungpack and Yoo, Sungjoo and Mutlu, Onur and Choi, Kiyoung},
+  booktitle = {2015 ACM/IEEE 42nd Annual International Symposium on Computer Architecture (ISCA)},
+  title     = {A scalable processing-in-memory accelerator for parallel graph processing},
+  year      = {2015},
+  volume    = {},
+  number    = {},
+  pages     = {105-117},
+  keywords  = {Prefetching;Out of order;Lead;Internet;Parallel processing;System-on-chip},
+  doi       = {10.1145/2749469.2750386}
+}
+
+@inproceedings{SamsungHBMPIM,
+  author    = {Lee, Sukhan and Kang, Shin-haeng and Lee, Jaehoon and Kim, Hyeonsu and Lee, Eojin and Seo, Seungwoo and Yoon, Hosang and Lee, Seungwon and Lim, Kyounghwan and Shin, Hyunsung and Kim, Jinhyun and Seongil, O and Iyer, Anand and Wang, David and Sohn, Kyomin and Kim, Nam Sung},
+  booktitle = {2021 ACM/IEEE 48th Annual International Symposium on Computer Architecture (ISCA)},
+  title     = {Hardware Architecture and Software Stack for PIM Based on Commercial DRAM Technology : Industrial Product},
+  year      = {2021},
+  volume    = {},
+  number    = {},
+  pages     = {43-56},
+  keywords  = {Program processors;Neural networks;Memory management;Random access memory;Bandwidth;Software;Energy efficiency;processing in memory;neural network;accelerator;DRAM},
+  doi       = {10.1109/ISCA52012.2021.00013}
+}
+
+@article{AxDIMM,
+  author   = {Ke, Liu and Zhang, Xuan and So, Jinin and Lee, Jong-Geon and Kang, Shin-Haeng and Lee, Sukhan and Han, Songyi and Cho, YeonGon and Kim, Jin Hyun and Kwon, Yongsuk and Kim, KyungSoo and Jung, Jin and Yun, Ilkwon and Park, Sung Joo and Park, Hyunsun and Song, Joonho and Cho, Jeonghyeon and Sohn, Kyomin and Kim, Nam Sung and Lee, Hsien-Hsin S.},
+  journal  = {IEEE Micro},
+  title    = {Near-Memory Processing in Action: Accelerating Personalized Recommendation With AxDIMM},
+  year     = {2022},
+  volume   = {42},
+  number   = {1},
+  pages    = {116-127},
+  keywords = {Random access memory;Bandwidth;Throughput;Computational modeling;Hardware;Production;Field programmable gate arrays},
+  doi      = {10.1109/MM.2021.3097700}
+}
+
+@inproceedings{AiM,
+  author    = {Lee, Seongju and Kim, Kyuyoung and Oh, Sanghoon and Park, Joonhong and Hong, Gimoon and Ka, Dongyoon and Hwang, Kyudong and Park, Jeongje and Kang, Kyeongpil and Kim, Jungyeon and Jeon, Junyeol and Kim, Nahsung and Kwon, Yongkee and Vladimir, Kornijcuk and Shin, Woojae and Won, Jongsoon and Lee, Minkyu and Joo, Hyunha and Choi, Haerang and Lee, Jaewook and Ko, Donguc and Jun, Younggun and Cho, Keewon and Kim, Ilwoong and Song, Choungki and Jeong, Chunseok and Kwon, Daehan and Jang, Jieun and Park, Il and Chun, Junhyun and Cho, Joohwan},
+  booktitle = {2022 IEEE International Solid-State Circuits Conference (ISSCC)},
+  title     = {A 1ynm 1.25V 8Gb, 16Gb/s/pin GDDR6-based Accelerator-in-Memory supporting 1TFLOPS MAC Operation and Various Activation Functions for Deep-Learning Applications},
+  year      = {2022},
+  volume    = {65},
+  number    = {},
+  pages     = {1-3},
+  keywords  = {Costs;System performance;Conferences;Random access memory;Bandwidth;Throughput;Proposals},
+  doi       = {10.1109/ISSCC42614.2022.9731711}
+}
+
+@inproceedings{AlibabaPIM,
+  author    = {Niu, Dimin and Li, Shuangchen and Wang, Yuhao and Han, Wei and Zhang, Zhe and Guan, Yijin and Guan, Tianchan and Sun, Fei and Xue, Fei and Duan, Lide and Fang, Yuanwei and Zheng, Hongzhong and Jiang, Xiping and Wang, Song and Zuo, Fengguo and Wang, Yubing and Yu, Bing and Ren, Qiwei and Xie, Yuan},
+  booktitle = {2022 IEEE International Solid-State Circuits Conference (ISSCC)},
+  title     = {184QPS/W 64Mb/mm23D Logic-to-DRAM Hybrid Bonding with Process-Near-Memory Engine for Recommendation System},
+  year      = {2022},
+  volume    = {65},
+  number    = {},
+  pages     = {1-3},
+  keywords  = {Energy consumption;Computational modeling;Memory management;Multitasking;Natural language processing;Graph neural networks;System-on-chip},
+  doi       = {10.1109/ISSCC42614.2022.9731694}
+}
+
+@inproceedings{UPMEMHotChips,
+  author    = {Devaux, Fabrice},
+  booktitle = {2019 IEEE Hot Chips 31 Symposium (HCS)},
+  title     = {The true Processing In Memory accelerator},
+  year      = {2019},
+  volume    = {},
+  number    = {},
+  pages     = {1-24},
+  keywords  = {Standards;Random access memory;Program processors;Servers;Big Data;Bandwidth;Computer architecture},
+  doi       = {10.1109/HOTCHIPS.2019.8875680}
+}
+
+@article{BenchmarkingMutlu,
+  author   = {Gómez-Luna, Juan and Hajj, Izzat El and Fernandez, Ivan and Giannoula, Christina and Oliveira, Geraldo F. and Mutlu, Onur},
+  journal  = {IEEE Access},
+  title    = {Benchmarking a New Paradigm: Experimental Analysis and Characterization of a Real Processing-in-Memory System},
+  year     = {2022},
+  volume   = {10},
+  number   = {},
+  pages    = {52565-52608},
+  keywords = {Computer architecture;Benchmark testing;Random access memory;Graphics processing units;Hardware;Software;Energy consumption;Processing-in-memory;near-data processing;memory systems;data movement bottleneck;DRAM;benchmarking;real-system characterization;workload characterization},
+  doi      = {10.1109/ACCESS.2022.3174101}
+}
+
+@inproceedings{BenchmarkingUPMEM,
+  author    = {Falevoz, Yann and Legriel, Julien},
+  title     = {Energy Efficiency Impact of Processing in Memory: A Comprehensive Review of Workloads on the UPMEM Architecture},
+  year      = {2024},
+  isbn      = {978-3-031-48802-3},
+  publisher = {Springer-Verlag},
+  address   = {Berlin, Heidelberg},
+  url       = {https://doi.org/10.1007/978-3-031-48803-0_13},
+  doi       = {10.1007/978-3-031-48803-0_13},
+  abstract  = {Processing-in-Memory (PIM) architectures have emerged as a promising solution for data-intensive applications, providing significant speedup by processing data directly within the memory. However, the impact of PIM on energy efficiency is not well characterized. In this paper, we provide a comprehensive review of workloads ported to the first PIM product available on the market, namely the UPMEM architecture, and quantify the impact on each workload in terms of energy efficiency. Less than the half of the reviewed papers provide insights on the impact of PIM on energy efficiency, and the evaluation methods differ from one paper to the other. To provide a comprehensive overview, we propose a methodology for estimating energy consumption and efficiency for both the PIM and baseline systems at data center level, enabling a direct comparison of the two systems. Our results show that PIM can provide significant energy savings for data intensive workloads. We also identify key factors that impact the energy efficiency of UPMEM PIM, including the workload characteristics. Overall, this paper provides valuable insights for researchers and practitioners looking to optimize energy efficiency in data-intensive applications using UPMEM PIM architecture.},
+  booktitle = {Euro-Par 2023: Parallel Processing Workshops: Euro-Par 2023 International Workshops, Limassol, Cyprus, August 28 – September 1, 2023, Revised Selected Papers, Part II},
+  pages     = {155–166},
+  numpages  = {12},
+  keywords  = {Processing in memory (PIM), UPMEM architecture, Data-centric architectures, Workload optimization, High-performance computing, Computational efficiency, Energy consumption, Energy efficiency},
+  location  = {Limassol, Cyprus}
+}
+
+@inproceedings{BenchmarkingGermany,
+  author    = {Friesel, Birte and L\"{u}tke Dreimann, Marcel and Spinczyk, Olaf},
+  title     = {A Full-System Perspective on UPMEM Performance},
+  year      = {2023},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/3609308.3625266},
+  doi       = {10.1145/3609308.3625266},
+  abstract  = {Recently, UPMEM has introduced the first commercially available processing in memory (PIM) platform. Its key feature are DRAM memory chips with built-in RISC CPUs for in-memory data processing. Naturally, this has sparked interest in the research community, which previously was limited to PIM simulators and custom FPGA prototypes. One result of this is the PrIM benchmark suite that combines an in-depth analysis of PIM performance with benchmarks that measure the speedup of PIM over processing on conventional CPUs and GPUs [10]. However, the current generation of UPMEM PIM faces limitations such as memory interleaving, and as such does not provide true in-memory computing. Applications must store data in DRAM and transfer it to/from UPMEM modules for processing, which behave just like computational offloading engines from this perspective. This paper examines the ramifications of treating them as such in comparative performance benchmarks. By extending the PrIM suite to address the challenges that computational offloading benchmarks face, we show that such a full-system perspective can drastically alter offloading recommendations, with 9 of 11 previously UPMEM-friendly benchmarks now performing best on a conventional server CPU.},
+  booktitle = {Proceedings of the 1st Workshop on Disruptive Memory Systems},
+  pages     = {1–7},
+  numpages  = {7},
+  keywords  = {computational offloading, processing in memory, near-memory computing, benchmarks},
+  location  = {Koblenz, Germany},
+  series    = {DIMES '23}
+}
+
+@inproceedings{BenchmarkingUBC,
+  author    = {Joel Nider and Craig Mustard and Andrada Zoltan and John Ramsden and Larry Liu and Jacob Grossbard and Mohammad Dashti and Romaric Jodin and Alexandre Ghiti and Jordi Chauzi and Alexandra Fedorova},
+  title     = {A Case Study of {Processing-in-Memory} in {off-the-Shelf} Systems},
+  booktitle = {2021 USENIX Annual Technical Conference (USENIX ATC 21)},
+  year      = {2021},
+  isbn      = {978-1-939133-23-6},
+  pages     = {117--130},
+  url       = {https://www.usenix.org/conference/atc21/presentation/nider},
+  publisher = {USENIX Association},
+  month     = jul
+}
+
+@inproceedings{uPimulator,
+  author    = {Hyun, Bongjoon and Kim, Taehun and Lee, Dongjae and Rhu, Minsoo},
+  booktitle = {2024 IEEE International Symposium on High-Performance Computer Architecture (HPCA)},
+  title     = {Pathfinding Future PIM Architectures by Demystifying a Commercial PIM Technology},
+  year      = {2024},
+  volume    = {},
+  number    = {},
+  pages     = {263-279},
+  keywords  = {Microarchitecture;Source coding;Computer architecture;Parallel processing;Vectors;Distance measurement;Processing-In-Memory (PIM);Near-Memory Processing;Parallel Architecture},
+  doi       = {10.1109/HPCA57654.2024.00029}
+}
+
+@misc{CINMCompiler,
+  title         = {CINM (Cinnamon): A Compilation Infrastructure for Heterogeneous Compute In-Memory and Compute Near-Memory Paradigms},
+  author        = {Asif Ali Khan and Hamid Farzaneh and Karl F. A. Friebel and Clément Fournier and Lorenzo Chelini and Jeronimo Castrillon},
+  year          = {2024},
+  eprint        = {2301.07486},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.AR},
+  url           = {https://arxiv.org/abs/2301.07486}
+}
+
+@inproceedings{SimplePIM,
+  author    = {Chen, Jinfan and Gómez-Luna, Juan and El Hajj, Izzat and Guo, Yuxin and Mutlu, Onur},
+  booktitle = {2023 32nd International Conference on Parallel Architectures and Compilation Techniques (PACT)},
+  title     = {SimplePIM: A Software Framework for Productive and Efficient Processing-in-Memory},
+  year      = {2023},
+  volume    = {},
+  number    = {},
+  pages     = {99-111},
+  keywords  = {Codes;Program processors;Programming;Parallel processing;Hardware;Software;Complexity theory;in-memory processing},
+  doi       = {10.1109/PACT58117.2023.00017}
+}
+
+@article{SparseP,
+  author     = {Giannoula, Christina and Fernandez, Ivan and Luna, Juan G\'{o}mez and Koziris, Nectarios and Goumas, Georgios and Mutlu, Onur},
+  title      = {SparseP: Towards Efficient Sparse Matrix Vector Multiplication on Real Processing-In-Memory Architectures},
+  year       = {2022},
+  issue_date = {March 2022},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {6},
+  number     = {1},
+  url        = {https://doi.org/10.1145/3508041},
+  doi        = {10.1145/3508041},
+  abstract   = {Several manufacturers have already started to commercialize near-bank Processing-In-Memory (PIM) architectures, after decades of research efforts. Near-bank PIM architectures place simple cores close to DRAM banks. Recent research demonstrates that they can yield significant performance and energy improvements in parallel applications by alleviating data access costs. Real PIM systems can provide high levels of parallelism, large aggregate memory bandwidth and low memory access latency, thereby being a good fit to accelerate the Sparse Matrix Vector Multiplication (SpMV) kernel. SpMV has been characterized as one of the most significant and thoroughly studied scientific computation kernels. It is primarily a memory-bound kernel with intensive memory accesses due its algorithmic nature, the compressed matrix format used, and the sparsity patterns of the input matrices given. This paper provides the first comprehensive analysis of SpMV on a real-world PIM architecture, and presents SparseP, the first SpMV library for real PIM architectures. We make three key contributions. First, we implement a wide variety of software strategies on SpMV for a multithreaded PIM core, including (1) various compressed matrix formats, (2) load balancing schemes across parallel threads and (3) synchronization approaches, and characterize the computational limits of a single multithreaded PIM core. Second, we design various load balancing schemes across multiple PIM cores, and two types of data partitioning techniques to execute SpMV on thousands of PIM cores: (1) 1D-partitioned kernels to perform the complete SpMV computation only using PIM cores, and (2) 2D-partitioned kernels to strive a balance between computation and data transfer costs to PIM-enabled memory. Third, we compare SpMV execution on a real-world PIM system with 2528 PIM cores to an Intel Xeon CPU and an NVIDIA Tesla V100 GPU to study the performance and energy efficiency of various devices, i.e., both memory-centric PIM systems and conventional processor-centric CPU/GPU systems, for the SpMV kernel. SparseP software package provides 25 SpMV kernels for real PIM systems supporting the four most widely used compressed matrix formats, i.e., CSR, COO, BCSR and BCOO, and a wide range of data types. SparseP is publicly and freely available at https://github.com/CMU-SAFARI/SparseP. Our extensive evaluation using 26 matrices with various sparsity patterns provides new insights and recommendations for software designers and hardware architects to efficiently accelerate the SpMV kernel on real PIM systems.},
+  journal    = {Proc. ACM Meas. Anal. Comput. Syst.},
+  month      = feb,
+  articleno  = {21},
+  numpages   = {49},
+  keywords   = {benchmarking, data movement bottleneck, dram, high-performance computing, hpc, memory systems, multicore, near-data processing, processing-in-memory, real-system characterization, sparse matrix-vector multiplication, spmv, spmv library, workload characterization}
+}
+
+@inproceedings{TransPimLib,
+  author    = {Item, Maurus and Oliveira, Geraldo F. and Gómez-Luna, Juan and Sadrosadati, Mohammad and Guo, Yuxin and Mutlu, Onur},
+  booktitle = {2023 IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS)},
+  title     = {TransPimLib: Efficient Transcendental Functions for Processing-in-Memory Systems},
+  year      = {2023},
+  volume    = {},
+  number    = {},
+  pages     = {235-247},
+  keywords  = {Instruction sets;Graphics processing units;Computer architecture;Machine learning;Market research;Libraries;Software;processing-in-memory;processing-near-memory;transcendental functions;activation functions;machine learning},
+  doi       = {10.1109/ISPASS57527.2023.00031}
+}
+
+@inproceedings{PID-Comm,
+  author    = {Noh, Si Ung and Hong, Junguk and Lim, Chaemin and Park, Seongyeon and Kim, Jeehyun and Kim, Hanjun and Kim, Youngsok and Lee, Jinho},
+  booktitle = {2024 ACM/IEEE 51st Annual International Symposium on Computer Architecture (ISCA)},
+  title     = {PID-Comm: A Fast and Flexible Collective Communication Framework for Commodity Processing-in-DIMM Devices},
+  year      = {2024},
+  volume    = {},
+  number    = {},
+  pages     = {245-260},
+  keywords  = {Performance evaluation;Computational modeling;Memory modules;Computer architecture;Benchmark testing;Hypercubes;Libraries;processing-in-memory;accelerator;DRAM;collective communication},
+  doi       = {10.1109/ISCA59077.2024.00027}
+}
+
+@inproceedings{DIMM-Link,
+  author    = {Zhou, Zhe and Li, Cong and Yang, Fan and Sun, Guangyu},
+  booktitle = {2023 IEEE International Symposium on High-Performance Computer Architecture (HPCA)},
+  title     = {DIMM-Link: Enabling Efficient Inter-DIMM Communication for Near-Memory Processing},
+  year      = {2023},
+  volume    = {},
+  number    = {},
+  pages     = {302-316},
+  keywords  = {Industries;Protocols;Computer architecture;Organizations;System integration;Routing;Hardware},
+  doi       = {10.1109/HPCA56546.2023.10071005}
+}
+
+@inproceedings{DNAMapping,
+  author    = {Lavenier, Dominique and Roy, Jean-Francois and Furodet, David},
+  booktitle = {2016 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)},
+  title     = {DNA mapping using Processor-in-Memory architecture},
+  year      = {2016},
+  volume    = {},
+  number    = {},
+  pages     = {1429-1435},
+  keywords  = {Genomics;Bioinformatics;DNA;Memory architecture;Lead;mapping;processing-in-memory;PIM;bioinformatics;genomic;I/O disk bandwidth;hardware accelerator},
+  doi       = {10.1109/BIBM.2016.7822732}
+}
+
+@inproceedings{VariantCalling,
+  author    = {Lavenier, Dominique and Cimadomo, Remy and Jodin, Romaric},
+  booktitle = {2020 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)},
+  title     = {Variant Calling Parallelization on Processor-in-Memory Architecture},
+  year      = {2020},
+  volume    = {},
+  number    = {},
+  pages     = {204-207},
+  keywords  = {Genomics;Field programmable gate arrays;Random access memory;Hardware;Bioinformatics;Servers;Graphics processing units;variant calling;processing-in-memory;PIM;bioinformatics;genomic;I/O disk bandwidth;hardware accelerator;power consumption},
+  doi       = {10.1109/BIBM49941.2020.9313351}
+}
+
+@inproceedings{RNA-seq,
+  author    = {Chen, Liang-Chi and Yu, Shu-Qi and Ho, Chien-Chung and Chang, Yuan-Hao and Chang, Da-Wei and Wang, Wei-Chen and Chang, Yu-Ming},
+  booktitle = {2022 IEEE 11th Non-Volatile Memory Systems and Applications Symposium (NVMSA)},
+  title     = {RNA-seq Quantification on Processing in memory Architecture: Observation and Characterization},
+  year      = {2022},
+  volume    = {},
+  number    = {},
+  pages     = {26-32},
+  keywords  = {Nonvolatile memory;RNA;Memory architecture;Programming;Task analysis;Guidelines;process in memory;RNA;DPU;sequencing;processing near memory;quantification},
+  doi       = {10.1109/NVMSA56066.2022.00014}
+}
+
+@inproceedings{UpPipe,
+  author    = {Chen, Liang-Chi and Ho, Chien-Chung and Chang, Yuan-Hao},
+  booktitle = {2023 60th ACM/IEEE Design Automation Conference (DAC)},
+  title     = {UpPipe: A Novel Pipeline Management on In-Memory Processors for RNA-seq Quantification},
+  year      = {2023},
+  volume    = {},
+  number    = {},
+  pages     = {1-6},
+  keywords  = {Program processors;Design automation;RNA;Pipelines;Memory management;Hardware;Software;processing-in-memory;RNA-seq quantification;UPMEM DPU},
+  doi       = {10.1109/DAC56929.2023.10247915}
+}
+
+@article{GAPiM,
+  author       = {Abecassis, Naomie and G{\'o}mez-Luna, Juan and Mutlu, Onur and Ginosar, Ran and Moisson-Franckhauser, Aph{\'e}lie and Yavits, Leonid},
+  title        = {GAPiM: Discovering Genetic Variations on a Real Processing-in-Memory System},
+  elocation-id = {2023.07.26.550623},
+  year         = {2023},
+  doi          = {10.1101/2023.07.26.550623},
+  publisher    = {Cold Spring Harbor Laboratory},
+  abstract     = {Variant calling is a fundamental stage in genome analysis that identifies mutations (variations) in a sequenced genome relative to a known reference genome. Pair-HMM is a key part of the variant calling algorithm and its most compute-intensive part. In recent years, Processing-in-Memory (PiM) solutions, which consist of placing compute capabilities near/inside memory, have been proposed to speed up the genome analysis pipeline. We implement the Pair-HMM algorithm on a commercial PiM platform developed by UPMEM. We modify the Pair-HMM algorithm to make it more suitable for PiM execution with acceptable loss of accuracy. We evaluate our implementation on single chromosomes and whole genome sequencing datasets, demonstrating up to 2x speedup compared to existing CPU accelerations and up to 3x speedup compared to FPGA accelerations.Competing Interest StatementThe authors have declared no competing interest.},
+  url          = {https://www.biorxiv.org/content/early/2023/07/29/2023.07.26.550623},
+  eprint       = {https://www.biorxiv.org/content/early/2023/07/29/2023.07.26.550623.full.pdf},
+  journal      = {bioRxiv}
+}
+
+@inproceedings{Skyline,
+  author    = {Zois, Vasileios and Gupta, Divya and Tsotras, Vassilis J. and Najjar, Walid A. and Roy, Jean-Francois},
+  title     = {Massively parallel skyline computation for processing-in-memory architectures},
+  year      = {2018},
+  isbn      = {9781450359863},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/3243176.3243187},
+  doi       = {10.1145/3243176.3243187},
+  abstract  = {Processing-In-Memory (PIM) is an increasingly popular architecture aimed at addressing the 'memory wall' crisis by prioritizing the integration of processors within DRAM. It promotes low data access latency, high bandwidth, massive parallelism, and low power consumption. The skyline operator is a known primitive used to identify those multi-dimensional points offering optimal trade-offs within a given dataset. For large multidimensional dataset, calculating the skyline is extensively compute and data intensive. Although, PIM systems present opportunities to mitigate this cost, their execution model relies on all processors operating in isolation with minimal data exchange. This prohibits direct application of known skyline optimizations which are inherently sequential, creating dependencies and large intermediate results that limit the maximum parallelism, throughput, and require an expensive merging phase.In this work, we address these challenges by introducing the first skyline algorithm for PIM architectures, called DSky. It is designed to be massively parallel and throughput efficient by leveraging a novel work assignment strategy that emphasizes load balancing. Our experiments demonstrate that it outperforms the state-of-the-art algorithms for CPUs and GPUs, in most cases. DSky achieves 2\texttimes{} to 14\texttimes{} higher throughput compared to the state-of-the-art solutions on competing CPU and GPU architectures. Furthermore, we showcase DSky's good scaling properties which are intertwined with PIM's ability to allocate resources with minimal added cost. In addition, we showcase an order of magnitude better energy consumption compared to CPUs and GPUs.},
+  booktitle = {Proceedings of the 27th International Conference on Parallel Architectures and Compilation Techniques},
+  articleno = {1},
+  numpages  = {12},
+  keywords  = {skyline queries, processing-near-memory, processing-in-memory, pareto dominance, massive parallelism, load balancing},
+  location  = {Limassol, Cyprus},
+  series    = {PACT '18}
+}
+
+@inproceedings{PIM-Model,
+  author    = {Kang, Hongbo and Gibbons, Phillip B. and Blelloch, Guy E. and Dhulipala, Laxman and Gu, Yan and McGuffey, Charles},
+  title     = {The Processing-in-Memory Model},
+  year      = {2021},
+  isbn      = {9781450380706},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/3409964.3461816},
+  doi       = {10.1145/3409964.3461816},
+  abstract  = {As computational resources become more efficient and data sizes grow, data movement is fast becoming the dominant cost in computing. Processing-in-Memory is emerging as a key technique for reducing costly data movement, by enabling computation to be executed on compute resources embedded in the memory modules themselves.  This paper presents the Processing-in-Memory (PIM) model, for the design and analysis of parallel algorithms on systems providing processing-in-memory modules. The PIM model focuses on keys aspects of such systems, while abstracting the rest. Namely, the model combines (i) a CPU-side consisting of parallel cores with fast access to a small shared memory of size M words (as in traditional parallel computing), (ii) a PIM-side consisting of P PIM modules, each with a core and a local memory of size Θ(n/P) words for an input of size n (as in traditional distributed computing), and (iii) a network between the two sides. The model combines standard parallel complexity metrics for both shared memory (work and depth) and distributed memory (local work, communication time) computing. A key algorithmic challenge is to achieve load balance among the PIM modules in both their communication and their local work, while minimizing the communication time. We demonstrate how to overcome this challenge for an ordered search structure, presenting a parallel PIM-skiplist data structure that efficiently supports a wide range of batch-parallel queries and updates.},
+  booktitle = {Proceedings of the 33rd ACM Symposium on Parallelism in Algorithms and Architectures},
+  pages     = {295–306},
+  numpages  = {12},
+  keywords  = {batch-parallel data structures, models of parallel computation, processing-in-memory, skip list},
+  location  = {Virtual Event, USA},
+  series    = {SPAA '21}
+}
+
+@article{PIM-Tree,
+  author     = {Kang, Hongbo and Zhao, Yiwei and Blelloch, Guy E. and Dhulipala, Laxman and Gu, Yan and McGuffey, Charles and Gibbons, Phillip B.},
+  title      = {PIM-Tree: A Skew-Resistant Index for Processing-in-Memory},
+  year       = {2022},
+  issue_date = {December 2022},
+  publisher  = {VLDB Endowment},
+  volume     = {16},
+  number     = {4},
+  issn       = {2150-8097},
+  url        = {https://doi.org/10.14778/3574245.3574275},
+  doi        = {10.14778/3574245.3574275},
+  abstract   = {The performance of today's in-memory indexes is bottlenecked by the memory latency/bandwidth wall. Processing-in-memory (PIM) is an emerging approach that potentially mitigates this bottleneck, by enabling low-latency memory access whose aggregate memory bandwidth scales with the number of PIM nodes. There is an inherent tension, however, between minimizing inter-node communication and achieving load balance in PIM systems, in the presence of workload skew. This paper presents PIM-tree, an ordered index for PIM systems that achieves both low communication and high load balance, regardless of the degree of skew in data and queries. Our skew-resistant index is based on a novel division of labor between the host CPU and PIM nodes, which leverages the strengths of each. We introduce push-pull search, which dynamically decides whether to push queries to a PIM-tree node or pull the node's keys back to the CPU based on workload skew. Combined with other PIM-friendly optimizations (shadow subtrees and chunked skip lists), our PIM-tree provides high-throughput, (guaranteed) low communication, and (guaranteed) high load balance, for batches of point queries, updates, and range scans. We implement PIM-tree, in addition to prior proposed PIM indexes, on the latest PIM system from UPMEM, with 32 CPU cores and 2048 PIM nodes. On workloads with 500 million keys and batches of 1 million queries, the throughput using PIM-trees is up to 69.7X and 59.1x higher than the two best prior PIM-based methods. As far as we know these are the first implementations of an ordered index on a real PIM system.},
+  journal    = {Proc. VLDB Endow.},
+  month      = dec,
+  pages      = {946–958},
+  numpages   = {13}
+}
+
+@inproceedings{PIM-Trie,
+  author    = {Kang, Hongbo and Zhao, Yiwei and Blelloch, Guy E. and Dhulipala, Laxman and Gu, Yan and McGuffey, Charles and Gibbons, Phillip B.},
+  title     = {PIM-trie: A Skew-resistant Trie for Processing-in-Memory},
+  year      = {2023},
+  isbn      = {9781450395458},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/3558481.3591070},
+  doi       = {10.1145/3558481.3591070},
+  abstract  = {Memory latency and bandwidth are significant bottlenecks in designing in-memory indexes. Processing-in-memory (PIM), an emerging hardware design approach, alleviates this problem by embedding processors in memory modules, enabling low-latency memory access whose aggregated bandwidth scales linearly with the number of PIM modules. Despite recent work in balanced comparison-based indexes on PIM systems, building efficient tries for PIMs remains an open challenge due to tries' inherently unbalanced shape.This paper presents the PIM-trie, the first batch-parallel radix-based index for PIM systems that provides load balance and low communication under adversary-controlled workloads. We introduce trie matching-matching a query trie of a batch against the compressed data trie-as a key building block for PIM-friendly index operations. Our algorithm combines (i) hash-based comparisons for coarse-grained work distribution/elimination and (ii) bit-by-bit comparisons for fine-grained matching. Combined with other techniques (meta-block decomposition, selective recursive replication, differentiated verification), PIM-trie supports LongestCommonPrefix, Insert, and Delete in O(logP) communication rounds per batch and O(l/w) communication volume per string, where P is the number of PIM modules, l is the string length in bits, and w is the machine word size. Moreover, work and communication are load-balanced among modules whp, even under worst-case skew.},
+  booktitle = {Proceedings of the 35th ACM Symposium on Parallelism in Algorithms and Architectures},
+  pages     = {1–14},
+  numpages  = {14},
+  keywords  = {in-memory index, processing-in-memory, radix tree, trie},
+  location  = {Orlando, FL, USA},
+  series    = {SPAA '23}
+}
+
+@inproceedings{PIM-DB,
+  author    = {Bernhardt, Arthur and Koch, Andreas and Petrov, Ilia},
+  title     = {pimDB: From Main-Memory DBMS to Processing-In-Memory DBMS-Engines on Intelligent Memories},
+  year      = {2023},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/3592980.3595312},
+  doi       = {10.1145/3592980.3595312},
+  abstract  = {The performance and scalability of modern data-intensive systems are limited by massive data movement of growing datasets across the whole memory hierarchy to the CPUs. Such traditional processor-centric DBMS architectures are bandwidth- and latency-bound. Processing-in-Memory (PIM) designs seek to overcome these limitations by integrating memory and processing functionality on the same chip. PIM targets near- or in-memory data processing, leveraging the greater in-situ parallelism and bandwidth. In this paper, we introduce pimDB and provide an initial comparison of processor-centric and PIM-DBMS approaches under different aspects, such as scalability and parallelism, cache-awareness, or PIM-specific compute/bandwidth tradeoffs. The evaluation is performed end-to-end on a real PIM hardware system from UPMEM.},
+  booktitle = {Proceedings of the 19th International Workshop on Data Management on New Hardware},
+  pages     = {44–52},
+  numpages  = {9},
+  location  = {Seattle, WA, USA},
+  series    = {DaMoN '23}
+}
+
+@incollection{PIM-Scan,
+  author    = {Baumstark, Alexander and Jibril, Muhammad Attahir and Sattler, Kai-Uwe},
+  title     = {Accelerating Large Table Scan using Processing-In-Memory Technology},
+  year      = 2023,
+  doi       = {10.18420/BTW2023-51},
+  booktitle = {BTW 2023},
+  publisher = {Gesellschaft für Informatik e.V.},
+  address   = {Bonn},
+  isbn      = {978-3-88579-725-8},
+  pages     = {797--814}
+}
+
+@inproceedings{PIM—QueryCompile,
+  author    = {Baumstark, Alexander and Jibril, Muhammad Attahir and Sattler, Kai-Uwe},
+  booktitle = {2023 IEEE 39th International Conference on Data Engineering Workshops (ICDEW)},
+  title     = {Adaptive Query Compilation with Processing-in-Memory},
+  year      = {2023},
+  volume    = {},
+  number    = {},
+  pages     = {191-197},
+  keywords  = {Adaptation models;Databases;Computational modeling;Query processing;Conferences;Memory management;Programming;Processing in Memory;UPMEM;Query Compilation;Graph Database},
+  doi       = {10.1109/ICDEW58674.2023.00035}
+}
+
+@article{PIM-Join,
+  author     = {Lim, Chaemin and Lee, Suhyun and Choi, Jinwoo and Lee, Jounghoo and Park, Seongyeon and Kim, Hanjun and Lee, Jinho and Kim, Youngsok},
+  title      = {Design and Analysis of a Processing-in-DIMM Join Algorithm: A Case Study with UPMEM DIMMs},
+  year       = {2023},
+  issue_date = {June 2023},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {1},
+  number     = {2},
+  url        = {https://doi.org/10.1145/3589258},
+  doi        = {10.1145/3589258},
+  abstract   = {Modern dual in-line memory modules (DIMMs) support processing-in-memory (PIM) by implementing in-DIMM processors (IDPs) located near memory banks. PIM can greatly accelerate in-memory join, whose performance is frequently bounded by main-memory accesses, by offloading the operations of join from host central processing units (CPUs) to the IDPs. As real PIM hardware has not been available until very recently, the prior PIM-assisted join algorithms have relied on PIM hardware simulators which assume fast shared memory between the IDPs and fast inter-IDP communication; however, on commodity PIM-enabled DIMMs, the IDPs do not share memory and demand the CPUs to mediate inter-IDP communication. Such discrepancies in the architectural characteristics make the prior studies incompatible with the DIMMs. Thus, to exploit the high potential of PIM on commodity PIM-enabled DIMMs, we need a new join algorithm designed and optimized for the DIMMs and their architectural characteristics.In this paper, we design and analyze Processing-In-DIMM Join (PID-Join), a fast in-memory join algorithm which exploits UPMEM DIMMs, currently the only publicly-available PIM-enabled DIMMs. The DIMMs impose several key challenges on efficient acceleration of join including the shared-nothing nature and limited compute capabilities of the IDPs, the lack of hardware support for fast inter-IDP communication, and the slow IDP-wise data transfers between the IDPs and the main memory. PID-Join overcomes the challenges by prototyping and evaluating hash, sort-merge, and nested-loop algorithms optimized for the IDPs, enabling fast inter-IDP communication using host CPU cache streaming and vector instructions, and facilitating fast rank-wise data transfers between the IDPs and the main memory. Our evaluation using a real system equipped with eight UPMEM DIMMs and 1,024 IDPs shows that PID-Join greatly improves the performance of in-memory join over various CPU-based in-memory join algorithms.},
+  journal    = {Proc. ACM Manag. Data},
+  month      = jun,
+  articleno  = {113},
+  numpages   = {27},
+  keywords   = {in-memory join, processing-in-DIMM, processing-in-memory}
+}
+
+@phdthesis{UPMEMEmbeddingLookups,
+  title  = {Offloading embedding lookups to processing-in-memory for deep learning recommender models},
+  author = {Zarif, Niloofar},
+  year   = {2023},
+  school = {University of British Columbia}
+}
+
+@misc{UPMEMTraditionalML,
+  title         = {An Experimental Evaluation of Machine Learning Training on a Real Processing-in-Memory System},
+  author        = {Juan Gómez-Luna and Yuxin Guo and Sylvan Brocard and Julien Legriel and Remy Cimadomo and Geraldo F. Oliveira and Gagandeep Singh and Onur Mutlu},
+  year          = {2023},
+  eprint        = {2207.07886},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.AR},
+  url           = {https://arxiv.org/abs/2207.07886}
+}
+
+@inproceedings{UPMEMCNN,
+  author    = {Das, Prangon and Sutradhar, Purab Ranjan and Indovina, Mark and Dinakarrao, Sai Manoj Pudukotai and Ganguly, Amlan},
+  booktitle = {2022 IEEE 35th International System-on-Chip Conference (SOCC)},
+  title     = {Implementation and Evaluation of Deep Neural Networks in Commercially Available Processing in Memory Hardware},
+  year      = {2022},
+  volume    = {},
+  number    = {},
+  pages     = {1-6},
+  keywords  = {Deep learning;Neural networks;Computer architecture;Parallel processing;Hardware;Energy efficiency;System-on-chip;Deep Neural Network;Processing in Memory;Real-system Characterization},
+  doi       = {10.1109/SOCC56010.2022.9908126}
+}
+
+@misc{YoloV3,
+  title         = {YOLOv3: An Incremental Improvement},
+  author        = {Joseph Redmon and Ali Farhadi},
+  year          = {2018},
+  eprint        = {1804.02767},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CV},
+  url           = {https://arxiv.org/abs/1804.02767}
+}
+
+@article{UPMEMGNN,
+  author     = {Giannoula, Christina and Yang, Peiming and Fernandez, Ivan and Yang, Jiacheng and Durvasula, Sankeerth and Li, Yu Xin and Sadrosadati, Mohammad and Luna, Juan Gomez and Mutlu, Onur and Pekhimenko, Gennady},
+  title      = {PyGim : An Efficient Graph Neural Network Library for Real Processing-In-Memory Architectures},
+  year       = {2024},
+  issue_date = {December 2024},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA},
+  volume     = {8},
+  number     = {3},
+  url        = {https://doi.org/10.1145/3700434},
+  doi        = {10.1145/3700434},
+  abstract   = {Graph Neural Networks (GNNs) are emerging models to analyze graph-structure data. GNN execution involves both compute-intensive and memory-intensive kernels. The latter kernels dominate execution time, because they are significantly bottlenecked by data movement between memory and processors. Processing-In-Memory (PIM) systems can alleviate this data movement bottleneck by placing simple processors near or inside to memory arrays. This work investigates the potential of PIM systems to alleviate the data movement bottleneck in GNNs, and introduces PyGim, an efficient and easy-to-use GNN library for real PIM systems. We propose intelligent parallelization techniques for memory-intensive kernels of GNNs tailored for real PIM systems, and develop an easy-to-use Python API for them. PyGim employs a cooperative GNN execution, in which the compute- and memory-intensive kernels are executed in processor-centric and memory-centric computing systems, respectively, to fully exploit the hardware capabilities. PyGim integrates a lightweight autotuner to tune the parallelization strategy of the memory-intensive kernel of GNNs and enable high programming ease. We extensively evaluate PyGim on a real-world PIM system that has 16 PIM DIMMs with 1992 PIM cores connected to a Host CPU. In GNN inference, we demonstrate that it outperforms prior state-of-the-art PIM works by on average 4.38\texttimes{} (up to 7.20\texttimes{}), and state-of-the-art PyTorch running on Host by on average 3.04\texttimes{} (up to 3.44\texttimes{}). PyGim improves energy efficiency by 2.86\texttimes{} (up to 3.68\texttimes{}) and 1.55\texttimes{} (up to 1.75\texttimes{}) over prior PIM and PyTorch Host schemes, respectively. In memory-intensive kernel of GNNs, PyGim provides 11.6\texttimes{} higher resource utilization in PIM system than that of PyTorch library (optimized CUDA implementation) in GPU systems. Our work provides useful recommendations for software, system and hardware designers. PyGim is publicly and freely available at https://github.com/CMU-SAFARI/PyGim facilitate the widespread use of PIM systems in GNNs.},
+  journal    = {Proc. ACM Meas. Anal. Comput. Syst.},
+  month      = dec,
+  articleno  = {43},
+  numpages   = {36},
+  keywords   = {benchmarking, data movement bottleneck, dram, graph neural networks, library, machine learning, memory systems, multicore, near-data processing, processing-in-memory, real-system characterization, sparse matrix-matrix multiplication, workload characterization}
+}
+
+@inproceedings{PIM-DL,
+  author    = {Li, Cong and Zhou, Zhe and Wang, Yang and Yang, Fan and Cao, Ting and Yang, Mao and Liang, Yun and Sun, Guangyu},
+  title     = {PIM-DL: Expanding the Applicability of Commodity DRAM-PIMs for Deep Learning via Algorithm-System Co-Optimization},
+  year      = {2024},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/3620665.3640376},
+  doi       = {10.1145/3620665.3640376},
+  abstract  = {DRAM-based processing-in-memory (DRAM-PIM) has gained commercial prominence in recent years. However, their integration for deep learning acceleration poses inherent challenges. Existing DRAM-PIMs are limited in computational capabilities, primarily applicable for element-wise and GEMV operators. Unfortunately, these operators contribute only a small portion of the execution time in most DNN workloads. Current systems still necessitate powerful hosts to handle a significant portion of compute-heavy operators.To expand the applicability of commodity DRAM-PIMs in accelerating deep learning, we introduce a novel PIM-DL framework. The philosophy behind PIM-DL is to replace the compute-heavy GEMM operations in linear layers with Lookup-Tables (LUTs). Such LUT-based neural networks (LUT-NNs) substantially reduce multiplications in DNN inference, rendering them suitable for efficient execution on DRAM-PIMs. To accurately convert DNNs into LUT-NNs and achieve optimal inference serving performance, we first introduce an enhanced LUT-NN (eLUT-NN) algorithm for model calibration, then we propose an Auto-Tuner capable of optimizing the mapping parameters on diverse DRAM-PIM platforms. We evaluate PIM-DL on off-the-shelf UPMEM PIM-DIMM products and simulated HBM-PIM/AiM platforms across multiple contemporary DNN workloads. Compared with GEMM-based inference on DRAM-PIMs, PIM-DL achieves 22.6\texttimes{}~37.1\texttimes{} speedup. Compared with CPU/GPU-based inference, PIM-DL achieves up to 3.54\texttimes{}/1.20\texttimes{} speedup.},
+  booktitle = {Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2},
+  pages     = {879–896},
+  numpages  = {18},
+  keywords  = {near-memory processing, machine learning},
+  location  = {La Jolla, CA, USA},
+  series    = {ASPLOS '24}
+}
+
+@inproceedings{SwiftRL,
+  author    = {Gogineni, Kailash and Dayapule, Sai Santosh and Gómez-Luna, Juan and Gogineni, Karthikeya and Wei, Peng and Lan, Tian and Sadrosadati, Mohammad and Mutlu, Onur and Venkataramani, Guru},
+  booktitle = {2024 IEEE International Symposium on Performance Analysis of Systems and Software (ISPASS)},
+  title     = {SwiftRL: Towards Efficient Reinforcement Learning on Real Processing-In-Memory Systems},
+  year      = {2024},
+  volume    = {},
+  number    = {},
+  pages     = {217-229},
+  keywords  = {Training;Performance evaluation;Silver;Q-learning;Software algorithms;Graphics processing units;Computer architecture;Reinforcement learning;Processing-in-memory;Multi-agent sys-tems;Memory bottleneck;Performance analysis},
+  doi       = {10.1109/ISPASS61541.2024.00029}
+}
+
+@inproceedings{PIM-Opt,
+  author    = {Rhyner, Steve and Luo, Haocong and G\'{o}mez-Luna, Juan and Sadrosadati, Mohammad and Jiang, Jiawei and Olgun, Ataberk and Gupta, Harshita and Zhang, Ce and Mutlu, Onur},
+  title     = {PIM-Opt: Demystifying Distributed Optimization Algorithms on a Real-World Processing-In-Memory System},
+  year      = {2024},
+  publisher = {Association for Computing Machinery},
+  address   = {New York, NY, USA},
+  url       = {https://doi.org/10.1145/3656019.3676947},
+  doi       = {10.1145/3656019.3676947},
+  abstract  = {Modern Machine Learning (ML) training on large-scale datasets is a very time-consuming workload. It relies on the optimization algorithm Stochastic Gradient Descent (SGD) due to its effectiveness, simplicity, and generalization performance (i.e., test performance on unseen data). Processor-centric architectures (e.g., CPUs, GPUs) commonly used for modern ML training workloads based on SGD are bottlenecked by data movement between the processor and memory units due to the poor data locality in accessing large training datasets. As a result, processor-centric architectures suffer from low performance and high energy consumption while executing ML training workloads. Processing-In-Memory (PIM) is a promising solution to alleviate the data movement bottleneck by placing the computation mechanisms inside or near memory. Several prior works propose PIM techniques to accelerate ML training; however, prior works either do not consider real-world PIM systems or evaluate algorithms that are not widely used in modern ML training. Our goal is to understand the capabilities and characteristics of popular distributed SGD algorithms on real-world PIM systems to accelerate data-intensive ML training workloads. To this end, we 1) implement several representative centralized parallel SGD algorithms, i.e., based on a central node responsible for synchronization and orchestration, on the real-world general-purpose UPMEM PIM system, 2) rigorously evaluate these algorithms for ML training on large-scale datasets in terms of performance, accuracy, and scalability, 3) compare to conventional CPU and GPU baselines, and 4) discuss implications for future PIM hardware. We highlight the need for a shift to an algorithm-hardware codesign to enable decentralized parallel SGD algorithms in real-world PIM systems, which significantly reduces the communication cost and improves scalability. Our results demonstrate three major findings: 1) The general-purpose UPMEM PIM system can be a viable alternative to state-of-the-art CPUs and GPUs for many memory-bound ML training workloads, especially when operations and datatypes are natively supported by PIM hardware, 2) it is important to carefully choose the optimization algorithms that best fit PIM, and 3) the UPMEM PIM system does not scale approximately linearly with the number of nodes for many data-intensive ML training workloads. We open source all our code to facilitate future research at https://github.com/CMU-SAFARI/PIM-Opt.},
+  booktitle = {Proceedings of the 2024 International Conference on Parallel Architectures and Compilation Techniques},
+  pages     = {201–218},
+  numpages  = {18},
+  keywords  = {Distributed Optimization Algorithms, ML, ML training, Optimization, Processing-In-Memory, Scalability, Stochastic Gradient Descent},
+  location  = {Long Beach, CA, USA},
+  series    = {PACT '24}
+}
+
+@inproceedings{NonuniformQuant,
+  author    = {Liu, Zechun and Cheng, Kwang-Ting and Huang, Dong and Xing, Eric and Shen, Zhiqiang},
+  booktitle = {2022 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  title     = {Nonuniform-to-Uniform Quantization: Towards Accurate Quantization via Generalized Straight-Through Estimation},
+  year      = {2022},
+  volume    = {},
+  number    = {},
+  pages     = {4932-4942},
+  keywords  = {Computer vision;Quantization (signal);Codes;Neural networks;Stochastic processes;Estimation;Entropy;Recognition: detection;categorization;retrieval; Datasets and evaluation; Deep learning architectures and techniques; Efficient learning and inferences; Representation learning},
+  doi       = {10.1109/CVPR52688.2022.00489}
+}
+
+@misc{FP8,
+  title         = {FP8 Formats for Deep Learning},
+  author        = {Paulius Micikevicius and Dusan Stosic and Neil Burgess and Marius Cornea and Pradeep Dubey and Richard Grisenthwaite and Sangwon Ha and Alexander Heinecke and Patrick Judd and John Kamalu and Naveen Mellempudi and Stuart Oberman and Mohammad Shoeybi and Michael Siu and Hao Wu},
+  year          = {2022},
+  eprint        = {2209.05433},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.LG},
+  url           = {https://arxiv.org/abs/2209.05433}
+}
+
+@inproceedings{GPGPU-Sim,
+  author    = {Bakhoda, Ali and Yuan, George L. and Fung, Wilson W. L. and Wong, Henry and Aamodt, Tor M.},
+  booktitle = {2009 IEEE International Symposium on Performance Analysis of Systems and Software},
+  title     = {Analyzing CUDA workloads using a detailed GPU simulator},
+  year      = {2009},
+  volume    = {},
+  number    = {},
+  pages     = {163-174},
+  keywords  = {Analytical models;Yarn;Graphics;Parallel processing;Microarchitecture;Hardware;Process design;Concurrent computing;Parallel programming;Computational modeling},
+  doi       = {10.1109/ISPASS.2009.4919648}
+}
+
+@inproceedings{LLVM,
+author = {Lattner, Chris and Adve, Vikram},
+title = {LLVM: A Compilation Framework for Lifelong Program Analysis \& Transformation},
+year = {2004},
+isbn = {0769521029},
+publisher = {IEEE Computer Society},
+address = {USA},
+abstract = {This paper describes LLVM (Low Level Virtual Machine),a compiler framework designed to support transparent, lifelongprogram analysis and transformation for arbitrary programs,by providing high-level information to compilertransformations at compile-time, link-time, run-time, and inidle time between runs.LLVM defines a common, low-levelcode representation in Static Single Assignment (SSA) form,with several novel features: a simple, language-independenttype-system that exposes the primitives commonly used toimplement high-level language features; an instruction fortyped address arithmetic; and a simple mechanism that canbe used to implement the exception handling features ofhigh-level languages (and setjmp/longjmp in C) uniformlyand efficiently.The LLVM compiler framework and coderepresentation together provide a combination of key capabilitiesthat are important for practical, lifelong analysis andtransformation of programs.To our knowledge, no existingcompilation approach provides all these capabilities.We describethe design of the LLVM representation and compilerframework, and evaluate the design in three ways: (a) thesize and effectiveness of the representation, including thetype information it provides; (b) compiler performance forseveral interprocedural problems; and (c) illustrative examplesof the benefits LLVM provides for several challengingcompiler problems.},
+booktitle = {Proceedings of the International Symposium on Code Generation and Optimization: Feedback-Directed and Runtime Optimization},
+pages = {75},
+location = {Palo Alto, California},
+series = {CGO '04}
+}
+
+@Inbook{IntelMKL,
+author="Wang, Endong
+and Zhang, Qing
+and Shen, Bo
+and Zhang, Guangyong
+and Lu, Xiaowei
+and Wu, Qing
+and Wang, Yajuan",
+title="Intel Math Kernel Library",
+bookTitle="High-Performance Computing on the Intel® Xeon Phi{\texttrademark}: How to Fully Exploit MIC Architectures",
+year="2014",
+publisher="Springer International Publishing",
+address="Cham",
+pages="167--188",
+abstract="In order to achieve optimal performance on multi-core and multi-processor systems, we need to fully use the features of parallelism and manage the memory hierarchical characters efficiently. The performance of sequential codes relies on the instruction-level and register-level SIMD parallelism, and also on high-speed cache-blocking functions. Threading applications need advanced planning to achieve satisfactory load balancing.",
+isbn="978-3-319-06486-4",
+doi="10.1007/978-3-319-06486-4_7",
+url="https://doi.org/10.1007/978-3-319-06486-4_7"
+}
+
+@inproceedings {Orca,
+author = {Gyeong-In Yu and Joo Seong Jeong and Geon-Woo Kim and Soojeong Kim and Byung-Gon Chun},
+title = {Orca: A Distributed Serving System for {Transformer-Based} Generative Models},
+booktitle = {16th USENIX Symposium on Operating Systems Design and Implementation (OSDI 22)},
+year = {2022},
+isbn = {978-1-939133-28-1},
+address = {Carlsbad, CA},
+pages = {521--538},
+url = {https://www.usenix.org/conference/osdi22/presentation/yu},
+publisher = {USENIX Association},
+month = jul
 }
