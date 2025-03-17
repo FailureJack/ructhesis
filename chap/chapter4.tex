@@ -1,8 +1,132 @@
 \chapter{基于近存计算模拟器的矩阵向量乘硬件优化}
-本章主要是基于此前的软件优化中出现的硬件架构方面的痛点对UPMEM硬件本身做修改，使用的是基于UPMEM的周期精确模拟器PIMulator\cite{uPimulator}，分别做两大硬件改动：1）给UPMEM增添查找表专用的硬件单元支持乘加操作；2）给UPMEM增添SIMD单元支持向量操作。基于这两大硬件改动修改软件算法观察GEMV算子表现，对UPMEM的硬件架构进行探究并给出未来发展建议。
+本章主要介绍近存计算模拟器的修改硬件优化矩阵向量乘的设计。第一小节是之前的三个软件算法的详细分析。之后介绍新增融合查表加法指令对应矩阵向量乘的优化手段。然后详细介绍通过增加向量单元和指令，向量化计算矩阵向量乘的设计和算法。最后说明上述设计实现的模拟器平台，简要介绍模拟器特性和硬件修改实现方式。
 
-\section{PIMulator简介}
-PIMulator是一个UPMEM的周期精确模拟器\cite{uPimulator}，它由两个关键组件组成，如图\ref{PIMulator}所示：一个是与UPMEM指令集架构（Instruction Set Architecture, ISA）兼容的软件编译工具链，以及一个经过真实UPMEM-PIM硬件交叉验证的硬件性能模拟器。
+\section{软件优化性能瓶颈分析}
+在上一章提出了三种算法优化后，本小节对每种算法下的矩阵向量乘算子的在近存硬件上的执行情况进行了测试，分别测试其在特定规模和的矩阵和线程配置下的执行时间、周期数以及指令数。我们计算了不同算法的计算利用率（Instructions Per Cycle，IPC）和内存带宽利用率（MRAM Bandwidth Utilization，MBU）。这里MBU的计算公式为\ref{MBUEqu}，MRAMRead是算子执行过程种从MRAM读取的数据（MB），ExecuteTime是算子执行时间（秒），通过此前的工作知道理论带宽大概为628MB/s\cite{BenchmarkingMutlu}），因此可以算出利用率。矩阵仍然采用的是$4096\times 4096$的FP8格式，开启16个Tasklets，在单一DPU上的测试如表\ref{BottleneckTable}所示。
+
+\begin{table}[!htbp]
+    \centering
+    \label{BottleneckTable}
+    \caption{软件优化性能分析}
+    \begin{tabular}{llll}
+        \toprule
+        算法 & 执行耗时& IPC & MBU \\
+        \midrule
+        LUT-M & 698.7\;ms & 92.20\% & 11.88\% \\
+        LUT-W-C & 467.6\;ms &85.86\% & 30.04\% \\
+        LUT-W-R & 298.8\;ms &77.69\% & 50.34\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{equation}
+    MBU=\frac{MRAM\;Read}{ExecuteTime\times 628}\times 100\%
+    \label{MBUEqu}
+\end{equation}
+
+可以看到，在三种算法中，从LUT-M、LUT-W-C再到LUT-W-R，我们的IPC是下降的，相应的MBU是上升的，这说明我们在针对WRAM的优化中通过增加MRAM的访存次数来减少WRAM的访存，可以看到执行时间在逐渐降低证明这种优化有效：LUT-M虽然MRAM的访问少但是执行时间长，通过额外访问MRAM获取一些辅助性数据或增加访问MRAM的次数提高寄存器的局部性可以有效的提升算子性能，是一种权衡（trade off）。
+
+尽管如此，能观察到IPC的值始终在70\%以上，相应地MBU的值没有超过50\%，这充分说明了UPMEM这个硬件平台的特性为计算瓶颈，与传统的冯诺依曼架构不同，访存带宽很快几乎不会成为瓶颈。想要进一步提升算子性能，我们认为仅仅在软件层面做算法的优化十分有限，需要着手与UPMEM硬件结构做出优化，比如为UPMEM增添额外的计算单元和算术能力以增强UPMEM的计算强度。我们这里将不探讨简单的硬件参数修改诸如提高主频、增加浮点单元支持硬件浮点算术计算等等，我们将结合我们的软件算法特点去设计硬件的微架构的更改。
+
+\section{基于融合查表加法指令的优化}
+在x86CPU上编程时，如果需要访问数组的某个元素，需要拿到数组的首地址addr和元素索引index，以及每个元素所占字节数为width，通过计算addr+index*width得到真正的内存地址然后再去访存。这种乘加的操作在编译时会做优化，假如数组是连续访问的，那么会优化指令形成地址递增：只有第一次访问数组需要计算乘加，后面访问只需要在地址寄存器累加上width即可。但是UPMEM提供的编译器优化程度不够高，对于连续的数组访问都无法消除乘加操作，因此这里可以设计增加一系列指令专门用于访问数组（查找表），如\ref{LUTInst}所示，分别设计了适用于不同数据位宽的指令，如LHSI（Lookup Halfword Signed by Index），该指令接受dst寄存器、base寄存器、idx寄存器和移位立即数shift：dst寄存器是目标寄存器，base寄存器是数组的首地址，idx寄存器是数组的索引，shift指示的是元素宽度（2byte宽度是移位1位），这条指令的操作就是将idx寄存器的值左移shift位，然后与base寄存器的值相加得到地址addr并访存2个字节，将结果存入dst寄存器（符号位扩展）。这样数组的访问就可以通过这一条指令完成。
+
+\begin{figure}[!htbp]
+	\centering
+    \includegraphics[width=0.9\textwidth]{figures/LUTInst.pdf}
+	\caption{FLA指令集设计}
+    \label{LUTInst}
+\end{figure}
+
+在矩阵乘法的计算中，能够观察到一个非常基本的操作：向量和矩阵的元素相乘再与结果向量中的元素相加，将这种乘加操作融合成为单个操作，称为融合乘加（Fused Multiply Add，FMA）操作。在许多AI加速芯片中都设计有MAC单元（Multiplier-Accumulator Unit）支持FMA操作和指令。将乘加操作融合成为一条指令的优势一方面在于能够使得指令数目减少，减少取指和译码的时间，另一方面就是能够设计专门的电路优化计算，减少消耗周期数，从而整体提高算术吞吐。因此可以基于此前的查表指令，修改UPMEM硬件支持融合查表加法指令如\ref{LUTInst}所示，如FMLA（Fused Multiply Lookup Add），该指令接受add寄存器，lut\_base寄存器，idx寄存器和移位立即数shift：add寄存器用于存放累加结果，lut\_base寄存器存放的是查找表的首地址，idx寄存则是查找表的索引，shift同样指示的是元素宽度，这条指令的操作是类似此前的查表指令，先取得lut\_base[idx]结果，与add寄存器相加并累加到add中。至于FMAL（Fused Multiply Add Lookup）则是受armv8的LDADDA指令启发\footnote{https://developer.arm.com/documentation/dui0801/g/A64-Data-Transfer-Instructions/}，专门用于解决需要频繁读写结果向量的操作，其会从内存中读取某个数进行加法运算后再存回。这一系列的指令我们称之为FLA（Fused Lookup Add）指令集。
+
+\begin{figure}[htbp!]
+	\centering
+	\subfigure[LUT-M算法]{
+		\includegraphics[width=0.3\linewidth]{figures/asm1.png}
+		\label{LUTInstAsm:LUT-M}}
+	\subfigure[LUT-W-R算法]{
+		\includegraphics[width=0.3\linewidth]{figures/asm2.png}
+        \label{LUTInstAsm:LUT-W-R}}
+    \subfigure[LUT-W-C算法]{
+        \includegraphics[width=0.3\linewidth]{figures/asm3.png}
+        \label{LUTInstAsm:LUT-W-C}}
+    \\
+    \subfigure[LUT-M算法优化]{
+        \includegraphics[width=0.3\linewidth]{figures/asm1-opt.png}
+        \label{LUTInstAsm:LUT-M-opt}}
+    \subfigure[LUT-W-R算法优化]{
+        \includegraphics[width=0.3\linewidth]{figures/asm2-opt.png}
+        \label{LUTInstAsm:LUT-W-R-opt}}
+    \subfigure[LUT-W-C算法优化]{
+        \includegraphics[width=0.3\linewidth]{figures/asm3-opt.png}
+        \label{LUTInstAsm:LUT-W-C-opt}}
+	\label{LUTInstAsm}
+	\caption{矩阵向量乘算法循环语句汇编分析}
+\end{figure}
+
+对三个算法\ref{LUT-M}、\ref{LUT-W-R}、\ref{LUT-W-C}中的最深层循环语句进行汇编分析（参考的UPMEM的指令集）：算法LUT-M对应的是语句\verb|Result[k]+=SubLUT[Vector[j]&0xF][MatRow[k]]|，其指令序列如\ref{LUTInstAsm:LUT-M}所示；算法LUT-W-R对应的是语句\verb|temp+=∗(Offset[l] +SubMat[l][k]*ele_width)|，其指令序列如\ref{LUTInstAsm:LUT-W-R}所示；算法LUT-W-C对应的是语句\verb|Result[IndexRow[l]]+=product|，其指令序列如\ref{LUTInstAsm:LUT-W-C}所示。每做一次数组的访问或者累加操作，至少需要两条甚至以上的指令，现在使用\ref{LUTInst}中所示的指令集对上述汇编代码进行重写，能够得到优化后的汇编代码如\ref{LUTInstAsm:LUT-M-opt}、\ref{LUTInstAsm:LUT-W-R-opt}、\ref{LUTInstAsm:LUT-W-C-opt}所示，指令数目大大减少，由原先的6至8条指令减少到2至4条，由2到3倍的提升；由于最深层循环的循环次数是最多的，主要决定程序的性能，因此理论上使用融合查表加法指令能够对程序有2到3倍的性能提升。
+
+\section{基于向量指令的查表算法优化}
+SIMD（Single Instruction Multiple Data）是一种特殊的计算模式，即“单指令多数据”，它允许处理器通过一条指令同时对多个数据执行相同的操作，从而显著提高数据处理的效率和性能。在SIMD架构中，处理器执行一条指令，但这条指令会同时作用于多个数据单元，同时执行相同的算术操作，因此SIMD指令非常适用于矩阵和向量的数据计算。Intel是SIMD计算模式的主要推动者之一，为多种架构的处理器配备了SIMD处理单元和对应的指令集\cite{IntelAVX}，SIMD的数据位宽从一开始的128bit逐渐增长到256bit最后到521bit，大大提升了数据处理的效率。
+
+对于更低bit量化，可以为UPMEM增添SIMD指令进行加速。在Intel向量指令集中有：\verb|__m512i _mm512_permutexvar_epi32(__m512i idx, __m512i a)|，它接受两个AVX-512向量，并返回一个AVX-512向量，这些AVX-512向量由16个32位整形数组成，这个函数的作用是：按照index向量中指示的索引将a向量重排，比如index向量中第1个元素值是3，表示会将a向量中第4个元素重排到新向量的第1个位置。值的注意的是index向量中每个int32只用到了最低4bit的数值（确保索引值不超过16）。这种重排与查表操作存在相同之处，查表本身也是给出一张向量（子查找表），读取权重矩阵元素的值作为索引，再去查找表中取得乘积。上述函数中a向量为子查找表，权重矩阵的一行的前16个元素为index向量，相当于使用权重矩阵的值对子查找表做重排，可以一次性查出16个乘积结果。假设权重矩阵数据宽度为4bit，输入向量仍然是8bit的位宽，那么查找表为$256\times 16$的二维数组，仍然展开FP8到int32，那么LUT的每一行就是一个AVX512向量，刚好满足上述指令的条件。
+
+要想使用SIMD计算GEMV，首先需要对权重矩阵进行重新划分，现以Intel的AVX-512向量为例，对于行主存的矩阵，现将其切分成$8\times 16$的子块SubMat如图\ref{SIMD}，对这个子块进行重排，将其转换成一个AVX-512向量:将该AVX-512向量分组，分为16组INT32，将$\text{SubMat[0][0]}$的元素放置到INT32-0的最低四位$[0:4)$，再将$\text{SubMat[1][0]}$的元素放置到INT32-1的$[4:8)$，依次类推，直至遍历完8行，这样就填满了INT32-0，同样的道理，处理SubMat矩阵的第二列，得到INT32-1，当处理完SubMat的所有行和所有列之后，填满了该AVX-512向量。将该向量代替原子矩阵进行存储。完成了所有子块的重排之后，矩阵划分结束，其结果是行数减小到原来的8倍，列数扩大到原来的8倍。这时由于执行的是$8bit\times 4bit$的乘法，查找表的大小为$256\times 16\times 4Byte=16KB$，可以完全载入WRAM，因此可以直接按照GEMV内积的方式计算。
+
+\begin{figure}[!htbp]
+	\centering
+    \includegraphics[width=0.9\textwidth]{figures/SIMD.pdf}
+	\caption{使用SIMD重排指令的矩阵构建和计算}
+    \label{SIMD}
+\end{figure}
+
+具体的计算方式也需要将重排后的权重矩阵从行主存改为列主存，也就是以512bit的粒度进行转置。转置过后，原来一列的元素现在可以按照行访问提高访问效率。再基于DPU内部线程并行化，每个tasklet处理一列均分所有列。具体到单个AVX-512向量，仍然以IntelAVX指令为例，计算仍然以图\ref{SIMD}为例，计算该AVX-512向量时需要先载入对应的子查找表SLUT1到AVX-512向量a中（使用\verb|_mm512_loadu_si512|指令载入寄存器），然后载入权重的AVX-512向量到index寄存器中，执行\verb|_mm512_permutexvar_epi32|操作得到结果，使用\verb|_mm512_add_epi32|指令将其加到累加AVX-512结果寄存器上。然后使用\verb|_mm512_srli_epi32|指令对index向量右移4位，再重复刚才的过程；左移8次后完成整个AVX-512向量的计算，再依次执行该列的所有AVX-512向量的计算，执行完成后再将AVX-512的累加寄存器写到结果向量的对应位置上。不同的tasklet负责不同的列，其对应的结果向量的位置也不同，但是之间互相不干扰无竞争。
+
+\begin{figure}[!htbp]
+	\centering
+    \includegraphics[width=0.9\textwidth]{figures/SIMDInst.pdf}
+	\caption{向量指令设计}
+    \label{SIMDInst}
+\end{figure}
+
+要想完成上述工作，需要给UPMEM增加相应的向量单元并适配相应的指令集，如图\ref{SIMDInst}所示，使用LV和SV指令来从内存某处加载/存储512bit的向量到向量寄存器中。使用LSRV指令对512bit向量中的每个32bit数进行右移，右移的位数不超过31位。当然还要使用VADD执行两个512bit向量逐元素加法，以VPERM指令使用index向量对a向量进行重排。同时要高效完成上述工作，每个线程至少需要4个512向量寄存器，其中两个分别充当a和index，剩下的两个一个用于暂存向量重排的结果，一个用作累加寄存器。对于具体是实现，由于我们只是支持SIMD的部分计算，仅仅包括重排、加法和位移（向量的Load/Store比较简单），因此向量计算单元的电路设计不会特别复杂，同时由于UPMEM工作特性，线程数量大于11对于性能没有明显提升，存在大量空闲的寄存器（UPMEM有16个物理线程每个线程都有24个32bit寄存器），因此有足够的空间留给向量寄存器堆。
+
+\begin{algorithm}[!htbp]
+    \caption{基于SIMD指令的矩阵向量乘算法（LUT-SIMD）}
+    \label{LUT-SIMD}
+    \begin{algorithmic}[1]
+        \Require $Vector[M], TransMat[N/16][M*8], LUT[256][16], MapLUT[256]$; % input
+        \Ensure $Result\_8[N]$; % output
+
+        \State $\textbf{define}\;MatBuffer[1024],\;Result\_32[N]$
+
+        \For{$i \gets TaskletId$ \textbf{to} $N / 16 - 1$ \textbf{step} $TaskletNum$}
+            \For{$j \gets 0$ \textbf{to} $M * 8 - 1$ \textbf{step} $1024$}
+                \State $\textbf{mram\_read}(MatBuffer, \&TransMat[i][j], 1024)$
+                \For{$k \gets 0$ \textbf{to} $1023$ \textbf{step} $64$}
+                    \State $\textbf{LV}(A, \&MatBuffer[k], 64)$
+                    \For{$l \gets 0$ \textbf{to} $7$}
+                        \State $\textbf{LV}(Index, LUT[Vector[(j + k) / 8 + l]], 0)$
+                        \State $\textbf{VPERM}(Temp, A, Index)$
+                        \State $\textbf{VADD}(Adder, Adder, Temp),\quad \textbf{LSRV}(A, A, 4)$
+                    \EndFor
+                \EndFor
+            \EndFor
+            \State $\textbf{SV}(\&Result\_32[i*16], 0, Adder)$
+        \EndFor
+
+        % 调用二分查找函数
+        \State $Result\_8 \gets \textbf{BinarySearch}(Result\_32, MapLUT)$
+        \Comment{\textcolor{blue}{parallel in N for each tasklet}}
+        \State \Return $Result\_8$
+    \end{algorithmic}
+\end{algorithm}
+
+给出基于SIMD向量指令的算法如\ref{LUT-SIMD}所示，这里卸载的是$8bit\times 4bit$的乘法，因此查找表的维度是$256\times 16$，刚好可以放进WRAM中且每一行都是一个512bit的向量。权重矩阵需要重排，假设M和N都为4096，原本的维度是$4096\times 4096$，使用int8存储数组的维度是$4096\times 2048$，重排之后行缩小8倍，列扩大8倍变为$512\times 16384$，再按照512bit（64B）的粒度进行行列转置，维度就变成$256\times 32768$。上述操作中最深层循环的操作是指令LV、VPERM和VADD，每次执行这三条指令就可以对16个数进行查表并累加，大大提升了性能。
+
+\section{基于PIMulator的硬件改动}
+为了实现上述硬件的修改并验证性能，需要使用一个能够模仿UPMEM硬件计算的程序。PIMulator是一个UPMEM的周期精确模拟器\cite{uPimulator}，能够满足我们修改硬件的需求。它由两个关键组件组成，如图\ref{PIMulator}所示：一个是与UPMEM指令集架构（Instruction Set Architecture, ISA）兼容的软件编译工具链，以及一个经过真实UPMEM-PIM硬件交叉验证的硬件性能模拟器。
 
 \begin{figure}[!htbp]
 	\centering
@@ -11,49 +135,13 @@ PIMulator是一个UPMEM的周期精确模拟器\cite{uPimulator}，它由两个�
     \label{PIMulator}
 \end{figure}
 
-PIMulator的软件编译工具链的一部分基于开源的UPMEM软件开发工具包（Software Development Kit，SDK）提供的LLVM\cite{LLVM}编译器工具链（dpu-upmem-dpurte-clang），另一部分包括自定义的编译器、链接器和汇编器。PIMulator主要是用UPMEM SDK提供的编译器将用户所书写的能在真实硬件上运行的源代码以及和UPMEM兼容的C标准库程序进行预处理、编译和汇编成二进制对象，最终链接形成UPMEM的可执行二进制文件。同时，PIMulator使用自定义设计的链接器和汇编器，而不是直接使用UPMEM SDK的链接器。这是因为UPMEM的链接器与UPMEM硬件的微架构紧密绑定，限制了对PIM硬件架构的自定义能力。例如，当编译后的程序大小或WRAM内存使用量超过物理IRAM或WRAM容量时，UPMEM的链接器会报错。
+PIMulator的软件编译工具链的一部分基于开源的UPMEM软件开发工具包\footnote{https://sdk.upmem.com}（Software Development Kit，SDK）提供的LLVM\cite{LLVM}编译器工具链（dpu-upmem-dpurte-clang），另一部分包括自定义的编译器、链接器和汇编器。PIMulator主要是用UPMEM SDK提供的编译器将用户所书写的能在真实硬件上运行的源代码以及和UPMEM兼容的C标准库程序进行预处理、编译和汇编成二进制对象，最终链接形成UPMEM的可执行二进制文件。同时，PIMulator使用自定义设计的链接器和汇编器，而不是直接使用UPMEM SDK的链接器。这是因为UPMEM的链接器与UPMEM硬件的微架构紧密绑定，限制了对PIM硬件架构的自定义能力。例如，当编译后的程序大小或WRAM内存使用量超过物理IRAM或WRAM容量时，UPMEM的链接器会报错。
 
 PIMulator的硬件周期精确模拟器设计参考了UPMEM的用户手册和公开的微架构信息，主要设计点包括：1）对DPU计算核心进行建模：DPU核心被建模为一个14级顺序流水线处理器，充分模拟了流水线的调度算法以及奇偶寄存器堆访问时的限制。2）DRAM子系统建模：PIMulator的DRAM子系统模拟基于GPGPU-Sim的周期级DRAM模拟\cite{GPGPU-Sim}。由于UPMEM-PIM的内存调度策略细节未公开，PIMulator采用了首行优先，先到先服务（First Row, First Come First Served，FR-FCFS）算法来调度内存事务。3）CPU-DPU通信：设定固定通信值来模拟CPU和DPU之间的通信延迟，其值通过UPMEM-PIM真实硬件的系统性的性能分析来调整。UPMEM使用Intel AVX指令进行CPU-DPU通信，PIMulator同样模拟了这种通信的不对称带宽特性。
 
-PIMulator的设计采用了模块化结构，将SPMD的前端代码/数据生成与后端模拟器清晰分离，类似于 GPGPU-Sim的设计。这种设计使得PIMulator可以轻松扩展以模拟和评估新的软硬件架构。例如希望改动PIMulator的硬件，为某种计算提供相应指令，只需要在前端修改自定义的编译、链接和汇编的相关代码识别对应汇编指令，然后在后端模拟器中添加相应的指令处理逻辑即可。
+PIMulator有多个版本的实现\footnote{https://github.com/VIA-Research/uPIMulator}，在论文中实现的是前后端分离的单线程版，使用的Python实现前端，C++做硬件模拟后端，没有多线程支持，但它的平均模拟速率为3KIPS（千条指令每秒），与GPGPU-Sim相当，在这个版本中，由于UPMEM的当前编程模型以及其通信和同步原语的工作方式，DPU大多数情况下作为独立的处理器运行。PIMulator另有一版基于Golang开发的前后端一体的版本，充分利用多协程（coroutine）实现了模拟速度提8.5倍的提升并且内存占用减少7.5倍。
 
-PIMulator有多个版本的实现\footnote{模拟器开源仓库：https://github.com/VIA-Research/uPIMulator}，在论文中实现的是前后端分离的单线程版，使用的Python实现前端，C++做硬件模拟后端，没有多线程支持，但它的平均模拟速率为3KIPS（千条指令每秒），与GPGPU-Sim相当，在这个版本中，由于UPMEM的当前编程模型以及其通信和同步原语的工作方式，DPU大多数情况下作为独立的处理器运行。PIMulator另有一版基于Golang开发的前后端一体的版本，充分利用多协程（coroutine）实现了模拟速度提8.5倍的提升并且内存占用减少7.5倍。
-
-\section{查表专用FMA指令}
-在矩阵乘法的计算中，能够观察到一个非常基本的操作：向量和矩阵的元素相乘再与结果向量中的元素相加，将这种乘加操作融合成为单个操作，称为融合乘加（Fused Multiply Add，FMA）操作。在许多AI加速芯片中都设计有MAC单元（multiplier-accumulator unit）支持FMA操作和指令，其中也包括Intel的CPU。将乘加操作融合成为一条指令的优势一方面在于能够使得指令数目减少，减少取指和译码的时间，另一方面就是能够设计专门的电路优化计算，减少消耗周期数，从而整体提高算术吞吐。
-
-类似地，我们可以基于查找表为UPMEM增加LFMA（Look-up Fused Multiply Add，LFMA）单元，专门用于处理使用查找表代替乘法的FMA操作。同时，使用查找表查找元素时，需要先计算偏移，再去访存，会花费两条指令，由于UPMEM每个周期最多只能执行一条指令，这种计算偏移的开销不可忽略，因此也可以将这部分的计算融入LFMA指令当中，设计指令为\verb|LFMA add: reg, base: reg, offset: reg, ele_width: imm|执行的操作是\verb|add+=[base+offset*ele_width]|。但是由于某些情形下只需查表而无需算加法，因此再设计一个查表专用指令LWO（Load With Offset），类似的\verb|LFMA target: reg, base: reg, offset: reg, ele_width: imm|，执行的操作为\verb|target=[base+offset*ele_width]|。
-
-\begin{figure}[htbp!]
-	\centering
-	\subfigure[原本汇编代码]{
-		\includegraphics[width=0.4\textwidth]{figures/origin.png}
-		\label{ASM:Before}}
-	\subfigure[优化后汇编代码]{
-		\includegraphics[width=0.5\textwidth]{figures/after.png}
-        \label{ASM:After}}
-	\label{ASM}
-	\caption{查表专用指令汇编优化}
-\end{figure}
-
-如图\ref{ASM}所示，在算法\ref{LUT_Block}的最里层循环里，执行的计算为\verb|Result[k]+=SubLUT[Vector[j]&0xF][MatRow[k]];|，这个语句只有k在最内层循环发生改变，因此可以简化为\verb|Result[k]+=SubLUT[MatRow[k]];|可以看到，上述的语句的汇编中，查表SubLUT需要计算偏移因为查找表的每个元素是4字节，同样最后做累加时需要一起计算偏移做累加，因为结果向量的每个元素也是4字节。使用了LFMA和LWO指令后，指令数量从原本的7条减少到4条，性能几乎翻倍。
-
-\section{基于SIMD指令查表的矩阵向量乘算法}
-SIMD（Single Instruction Multiple Data）是一种特殊的计算模式，即“单指令多数据”，它允许处理器通过一条指令同时对多个数据执行相同的操作，从而显著提高数据处理的效率和性能。在SIMD架构中，处理器执行一条指令，但这条指令会同时作用于多个数据单元，同时执行相同的算术操作，因此SIMD指令非常适用于矩阵和向量的数据计算。Intel是SIMD计算模式的主要推动者，为多种架构的处理器配备了SIMD处理单元和对应的指令集\cite{IntelAVX}，SIMD的数据位宽从一开始的128bit逐渐增长到256bit最后到521bit，大大提升了数据处理的效率。
-
-对于更低bit量化的权重矩阵，我们可以为UPMEM增添SIMD指令进行加速。在Intel AVX-512指令中，有如下重排指令：\verb|__m512i _mm512_permutexvar_epi32(__m512i index, __m512i a)|，它接受两个AVX-512向量，并返回一个AVX-512向量，这些AVX-512向量由16个32位整形数组成，这个函数的作用是：按照index向量中指示的索引将a向量重排，比如index向量中第1个元素值是3，表示会将a向量中第4个元素重排到新向量的第1个位置。值的注意的是index向量中每个int32只用到了最低4bit的数值（确保索引值不超过16）。这种重排与查表操作存在相同之处，查表本身也是给出一张向量（子查找表），读取权重矩阵元素的值作为索引，再去查找表中取得乘积。上述函数中a向量为子查找表，权重矩阵的一行的前16个元素为index向量，相当于使用权重矩阵的值对子查找表做重排，可以一次性查出16个乘积结果。假设权重矩阵数据宽度为4bit，输入向量仍然是8bit的位宽，那么查找表为$256\times 16$的二维数组，仍然展开FP8到int32，那么LUT的每一行就是一个AVX512向量，刚好满足上述指令的条件。
-
-要想使用SIMD计算GEMV，首先需要对权重矩阵进行重新划分，对于行主存的矩阵，现将其切分成$8\times 16$的子块SubMat如图\ref{SIMD}，对这个子块我们对其进行重排，将其转换成一个AVX-512向量:将该AVX-512向量分组，分为16组INT32，将$\text{SubMat[0][0]}$的元素放置到INT32-0的最低四位$[0:4)$，再将$\text{SubMat[1][0]}$的元素放置到INT32-1的$[4:8)$，依次类推，直至遍历完8行，这样我们就填满了INT32-0，同样的道理，处理SubMat矩阵的第二列，得到INT32-1，当处理完SubMat的所有行和所有列之后，填满了该AVX-512向量。将该向量代替原子矩阵进行存储。完成了所有子块的重排之后，矩阵划分结束，其结果是行数减小到原来的8倍，列数扩大到原来的8倍。这时由于执行的是$8bit\times 4bit$的乘法，查找表的大小为$256\times 16\times 4Byte=16KB$，可以完全载入WRAM，因此可以直接按照GEMV内积的方式计算。
-
-\begin{figure}[!htbp]
-	\centering
-    \includegraphics[width=0.9\textwidth]{figures/SIMD.pdf}
-	\caption{使用SIMD重排指令的矩阵构建和计算示意图}
-    \label{SIMD}
-\end{figure}
-
-具体的计算方式也需要将重排后的权重矩阵从行主存改为列主存，也就是以512bit的粒度进行转置。转置过后，原来一列的元素现在可以按照行访问提高访问效率，再并行化，每个tasklet处理一列。具体到单个AVX-512向量计算仍然以图\ref{SIMD}为例，计算该AVX-512向量时需要先载入对应的子查找表SLUT1，载入该行子查找表到AVX-512向量a中（使用\verb|_mm512_loadu_si512|指令载入寄存器），然后载入该AVX-512向量到index中，执行\verb|_mm512_permutexvar_epi32|操作得到结果向量，使用\verb|_mm512_add_epi32|指令将其加到累加AVX-512结果寄存器上。然后使用\verb|_mm512_srli_epi32|指令对index向量右移4位，再重复刚才的过程；左移8次后完成整个AVX-512向量的计算，再类似依次执行该列的所有AVX-512向量的计算，执行完成后再将AVX-512的累加寄存器写到结果向量的对应位置上。不同的tasklet负责不同的列，其对应的结果向量的位置也不同，但是之间互相不干扰无竞争。
-
-要想完成上述工作，需要给UPMEM增加相应的向量单元并适配相应的指令集，除了需要之前介绍的\verb|_mm512_permutexvar_epi32|指令的支持之外，还需要引入一些新的指令，比如\verb|_mm512_loadu_si512|指令用于载入AVX-512向量，\verb|_mm512_add_epi32|指令用于向量加法运算，\verb|_mm512_srli_epi32|指令用于右移运算，\verb|_mm512_storeu_si512|指令用于将AVX-512向量存储到内存中。同时要高效完成上述工作，每个线程至少需要4个AVX-512寄存器，其中两个分别充当a和index，剩下的两个一个用于暂存向量重排的结果，一个用作累加寄存器。我们将这些指令和寄存器通过PIMulator加到UPMEM的软硬架构中，根据Intel AVX-512指令手册设置运算的每指令周期数（Cycle Per Instruction，CPI），都设置成1个时钟周期。
+PIMulator的设计采用了模块化结构，将SPMD的前端代码/数据生成与后端模拟器清晰分离，类似于 GPGPU-Sim的设计。这种设计使得PIMulator可以轻松扩展以模拟和评估新的软硬件架构。我们的硬件架构改动使用PIMulator的这种前后端分离架构实现，具体来说对于改动一的新增的融合查表加法单元，我们会定义好指令的格式，在前端直接修改GEMV算子的汇编代码并使用我们自定义的FLA指令集，然后修改前端汇编器，包括语法分析和词法分析的程序，使得前端程序能够正确识别我们新增的指令。与此同时，我们会在后端的逻辑部分新增对应指令的逻辑计算，以函数的形式暴露给后端模拟仿真。对于改动二SIMD指令也是类似，不过稍有不同之处在于SIMD指令需要自行添加寄存器并识别，这个需要在前后端的寄存文件中去定义向量寄存器。
 
 \section{本章小结}
+本章主要介绍了在近存计算模拟器上修改硬件加速矩阵向量乘的设计。首先对此前提出的软件算法进行了分析，分析算子的性能瓶颈在于商用硬件的计算性能上，阐明了修改硬件的原因和必要性。接着介绍了设计的融合查表加法指令集，通过对矩阵乘法汇编代码的分析和比较表明引入该融合查表加法指令会大幅减少指令数目并加速程序。然后是对UPMEM增加向量单元的设计，详细描述了权重矩阵的重排流程、SIMD指令集的设计和基于向量指令的GEMV算法，通过向量化访存和计算能够极大提高程序效率。最后介绍了上述硬件改动的实现，包括模拟器平台PIMulator的介绍和修改方式。

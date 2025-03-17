@@ -6,14 +6,14 @@
 %!TEX TS-program = xelatex
 %!TEX encoding = UTF-8 Unicode
 
-\documentclass[a4paper,bachelor]{ructhesis}
+\documentclass[a4paper,promaster]{ructhesis}
 
 %自添宏包
 \usepackage{skak}%国际象棋
 \usepackage{subfigure}%子图http://www.ctex.org/documents/latex/graphics/node111.html
 \usepackage{chemfig}%化学式
 \usetikzlibrary{trees}
-
+\usepackage{hyperref}
 \usepackage{algorithm}
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
@@ -21,11 +21,21 @@
 \usepackage{makecell}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{threeparttable}
+
 \usepackage[section]{placeins}
 \usepackage{url}
 \usepackage[backend=biber,bibstyle=gb7714-2015,gbnamefmt=lowercase,gbpub=false]{biblatex}
 \addbibresource{ref/test.bib}
 \newcommand{\upcite}[1]{\textsuperscript{\textsuperscript{\cite{#1}}}}
+
+\hypersetup{
+    colorlinks=true,            % 激活链接颜色，去掉链接边框
+    linkcolor=black,              % 文档内部链接颜色（如图表等引用）
+    citecolor=black,            % 文献引用链接颜色
+    filecolor=black,   % 文件链接颜色
+    urlcolor=black            % 外部URL链接颜色
+}
 
 % list figure and table name
 \renewcommand{\listfigurename}{图目录}
@@ -43,13 +53,13 @@
 %将封面信息补全，相关专业名称过长的请在文字前添加命令\ziju{-0.15}
 %文头
 % \sign{中国人民大学本科毕业论文}
-\sign{硕士学位论文}
+\sign{专业硕士学位论文}
 %\sign{博士学位论文}
 
 
 
 %以下信息本科研究生都需要补全
-\title{\ziju{-0.1}基于近存计算技术的矩阵向量乘算子优化研究}%论文题名
+\title{基于近存计算技术的矩阵向量乘优化研究}%论文题名
 \author{张魁耀辉}%作者
 \school{信息学院}%学院
 \field{大数据技术与工程}%专业
@@ -66,8 +76,8 @@
 
 
 %以下研究生填写
-\etitle{\ziju{-0.1}Research on Generalized Matrix-Vector Multiplication Operator Optimization Based on Processing-in-Memory Technology}%英文题目
-\keywords{\TeX{}}%论文主题词
+\etitle{\ziju{-0.2}Research on GEMV Optimization Based on Processing-in-Memory Technology}%英文题目
+\keywords{近数计算；矩阵向量乘；查找表}%论文主题词
 %摘要关键词
 \keywordzh{近数计算 \quad 矩阵向量乘 \quad 查找表}%中文摘要关键词
 \keyworden{Processing-in-Memory \qquad GEMV \qquad Lookup-Table}%英文摘要关键词
