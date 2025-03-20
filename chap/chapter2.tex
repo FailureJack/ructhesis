@@ -9,8 +9,6 @@
 
 GPT模型的结构源于Google在2017年提出的一个基本模型结构Transformer \cite{Transformer}。Transformer模型本身是为解决序列到序列（Seq2Seq）的自然语言翻译问题，构造了编码器（Encoder）模型用于理解待翻译序列，再使用解码器（Decoder）模型结合Encoder的理解生成翻译序列。在Encoder和Decoder中创造性地使用了自注意力（Self-Attention）机制，使得模型的性能表现异常优异，击败了当时其他的翻译模型。基于Transformer结构，自然语言处理（Natuarl Language Processing，NLP）领域的模型逐渐形成了三条不同的发展路径，分别是Encoder-Only架构、Encoder-Decoder架构和Decoder-Only架构。Encoder-Only架构的模型非常擅长做语义理解，其应用领域往往是文本分类，其中最著名的模型当属Bert\cite{Bert}；Encoder-Decoder架构和Transformer的应用领域类似，主要是用在机器翻译领域，其中比较著名的模型同是Google公司的T5\cite{T5}。Bert和T5模型在前GPT时代基本确定了NLP模型的预训练+微调的部署范式：由大公司使用大量数据集训练基础通用模型（预训练模型），在此基础上由使用者自行用少量高质量数据微调模型以适应不同的下游任务。
 
-Decoder-Only架构的模型与前面两者不同，可以直接自回归地生成自然语言，常常应用到文本续写领域和聊天机器人，其中代表模型就是OpenAI的GPT模型。最早的GPT-1\cite{GPT-1}仍然采用有监督和无监督混合训练的方式直接生成下一个词元，效果并不是很理想。到了GPT-2\cite{GPT-2}，GPT模型开始使用无监督的训练方式，加大了训练数据量并提升模型参数规模到150亿，无须微调模型而只需简单地通过写提示词（Prompt）就可以达到非常好的效果。到了GPT-3\cite{GPT-3}，进一步将模型参数量提升到了惊人的1750亿，并专注于提升模型的上下文学习能力（In-Context-Learning，ICL）。量变引起了质变，GPT-3的效果非常优异，为接下来的GPT3.5以及ChatGPT的爆火做了铺垫。得益于Decoder-Only架构模型在大量数据集上的良好零样本（Zero Shot）学习能力\cite{Zero-Shot}和少样本（Few Shot）微调能力\cite{Few-Shot}，大模型的参数规模不断增长（从前GPT时代Bert的1.1亿参数到GPT-3的1750亿），参数量的膨胀对于大模型推理提出了严峻的挑战，大公司旗下的云计算中心需要使用集群分布式推理上千亿大模型，常见的硬件几乎无法部署推理参数量最小的70亿参数模型。
-
 \begin{figure}[!htbp]
 	\centering
     \includegraphics[width=0.9\textwidth]{figures/LLMInfer.pdf}
@@ -18,12 +16,14 @@ Decoder-Only架构的模型与前面两者不同，可以直接自回归地生�
     \label{LLMInfer}
 \end{figure}
 
+Decoder-Only架构的模型与前面两者不同，可以直接自回归地生成自然语言，常常应用到文本续写领域和聊天机器人，其中代表模型就是OpenAI的GPT模型。最早的GPT-1\cite{GPT-1}仍然采用有监督和无监督混合训练的方式直接生成下一个词元，效果并不是很理想。到了GPT-2\cite{GPT-2}，GPT模型开始使用无监督的训练方式，加大了训练数据量并提升模型参数规模到150亿，无须微调模型而只需简单地通过写提示词（Prompt）就可以达到非常好的效果。到了GPT-3\cite{GPT-3}，进一步将模型参数量提升到了惊人的1750亿，并专注于提升模型的上下文学习能力（In-Context-Learning，ICL）。量变引起了质变，GPT-3的效果非常优异，为接下来的GPT3.5以及ChatGPT的爆火做了铺垫。得益于Decoder-Only架构模型在大量数据集上的良好零样本（Zero Shot）学习能力\cite{Zero-Shot}和少样本（Few Shot）微调能力\cite{Few-Shot}，大模型的参数规模不断增长（从前GPT时代Bert的1.1亿参数到GPT-3的1750亿），参数量的膨胀对于大模型推理提出了严峻的挑战，大公司旗下的云计算中心需要使用集群分布式推理上千亿大模型，常见的硬件几乎无法部署推理参数量最小的70亿参数模型。
+
 要想了解大模型在常用硬件平台上的推理瓶颈，就需要先了解大模型的结构，从开源的大模型入手是最佳选择。其中使用最广微调性能最高的开源大模型当属Facebook推出的Llama系列。Llama系列的模型架构都秉承类似的结构，以Llama2-7B\cite{Llama2}为例，模型一般由多层Decoder组成，每层Decoder分为多头注意力（Multi-Head Self-Attention，MHSA）和前馈神经网络（Feed-Forward Neural Network，FFN）两个主要部分。在LLM进行推理的时候，分为两个阶段：用户输入提示词（Prompt）进入网络到模型生成第一个token的阶段称作预填充阶段（The Prefilling Stage），再生成了第一个token之后，LLM不断自回归生成下一个token直到输出终止符的阶段称为解码阶段（The Decoding Stage）。如图\ref{LLMInfer}所示，两个阶段执行的计算并不相同，主要体现在Self-Attention部分，预填充阶段执行的是GEMM，而在解码阶段执行的是GEMV。两者不同的原因主要在于现代Decoder-Only架构的LLM在自回归生成阶段普遍采用因果注意力（Causal Self-Attention）并通过KVCache机制减少计算量，如图\ref{KVCache}所示，因果注意力会使用因果掩码对QK乘积矩阵的上三角置0：当生成第四个token时，Query1和Key2到Key4点注意力都被掩码置0无效化，为的是防止其与未来生成的token做注意力计算以保持因果一致性。第四个token进行推理时真正的新数据就是Query4、Key4、Value4和Attention4。因而KVCache就是将K向量和V向量缓存起来，每次只需要最新生成的Query向量参与运算，减少重复的注意力计算，此时Self-Attention的计算为GEMV。
 
 \begin{figure}[!htbp]
 	\centering
     \includegraphics[width=0.9\textwidth]{figures/KVCache.pdf}
-    \caption{使用因果掩码和KV缓存的自注意力机制计算}
+    \caption{基于因果掩码和KV缓存的自注意力机制}
 	\label{KVCache}
 \end{figure}
 
@@ -36,14 +36,13 @@ Decoder-Only架构的模型与前面两者不同，可以直接自回归地生�
 	\centering
     
 	\subfigure[正常对称量化]{
-		\includegraphics[width=0.9\textwidth]{figures/QuantNorm.pdf}
+		\includegraphics[width=0.45\textwidth]{figures/QuantNorm.pdf}
 		\label{Quant:Norm}}
-	\\
 	\subfigure[含有离群值的量化]{
-		\includegraphics[width=0.9\textwidth]{figures/QuantAbnorm.pdf}
+		\includegraphics[width=0.45\textwidth]{figures/QuantAbnorm.pdf}
         \label{Quant:Abnorm}}
 	\label{Quant}
-	\caption{32位浮点数向量对称量化为8为定点数向量}
+	\caption{32位浮点数向量对称量化为8位定点数}
 \end{figure}
 
 上述量化是非常标准的对称量化：所谓对称量化就是取得原数值域的一个对称区间量化到目标数值区域，一般使用最大绝对值确定对称区间。而与之相对的非对称量化就是量化原数值域的非对称区间，使用的是最小值和最大值；对称量化是非对称量化的一种特殊情况，二者都可以用公式\ref{QuantEqu}来表示，其中r是原始浮点数，S是缩放因子scale，Z是零点偏移，q是量化后的数值。当为对称量化时，零点无偏移，$r_{max}-r_{min}=2r_{max_abs}$。量化一般采用训练后量化(Post Training Quantization，PTQ)的方式以降低量化成本（简单的数学变换或者少量校准数据集），主要的量化对象就是激活值和权重，按照上述的方式将激活和权重全部量化到8bit的量化称为W8A8（weight 8bit activation 8bit）量化。但是假如激活向量或权重矩阵中，存在一个特别大的值如图\ref{Quant:Abnorm}所示，为512，那么scale计算就得到为0.25，将原float32向量与scale相乘再舍入取整为int8，发现绝大部份数都变为了0，0在浮点数制中是一个特殊值，任何数与0相乘或相除都是0，因此将int8向量反量化后，float32向量中的大部分数据也都变为0，从而导致精度严重损失。
@@ -69,7 +68,7 @@ GEMV的常规计算方式有两种，如图\ref{GEMVBasic}所示，可以类似�
 		\includegraphics[width=0.47\textwidth]{figures/GEMVOuter.pdf}
         \label{GEMVBasic:Outer}}
 	\label{GEMVBasic}
-	\caption{矩阵向量乘基本计算和优化方法}
+	\caption{矩阵向量乘基本优化方法}
 \end{figure}
 
 常规的优化手段如上所述，当然还可以使用多线程进行优化，此时只需要考虑各个线程的数据划分和线程间的同步开销即可。除此之外许多相关硬件被设计并对其加速提供了支持，这其中包括基于单指令多数据（Single Instruction Multiple Data，SIMD）的Intel的向量单元和AVX指令集，可以在0.5个周期内完成512bit向量的融合乘加运算（Fused Multiply Accumulate，FMA）操作\cite{IntelAVX}。还有Nvidia基于单指令多线程（Single Instruction Multiple Threads，SIMT）模型设计的CUDA Core\cite{Cuda}，以及专门用于GEMM计算的Tensor Core\cite{TensorCore}等等，都极大地提升了GEMM和GEMV的计算效率。
@@ -87,7 +86,7 @@ GEMV的常规计算方式有两种，如图\ref{GEMVBasic}所示，可以类似�
 
 \begin{figure}[!htbp]
 	\centering
-    \includegraphics[width=0.9\textwidth]{figures/3DStack.png}
+    \includegraphics[width=0.9\textwidth]{figures/3DStack.pdf}
     \caption{3D堆叠内存结构}
 	\label{3DStack}
 \end{figure}
@@ -95,11 +94,11 @@ GEMV的常规计算方式有两种，如图\ref{GEMVBasic}所示，可以类似�
 与此同时由于人工智能（Artificial Intelligence，AI）的兴起，许多专用于神经网络的PIM加速芯片也被设计出来，其中较为著名的就是三星的HBM-PIM（High Bandwidth Memory，HBM）产品\cite{SamsungHBMPIM}，该产品采用20nmDRAM工艺，使用3D堆叠技术堆叠封装了4层裸芯（Die），每层die的bank组内增加了专门用于做16位浮点数乘加操作的PIM单元以处理神经网络中的矩阵操作。此外三星的另一个产品AxDIMM\cite{AxDIMM}也采用了近存计算的技术，其将DRAM芯片（Chip）和一块FPGA处理单元整合到一块有着DDR4标准接口的主板上，主要用于加速推荐模型（Recommendation Model）的向量嵌入查找任务（Embedding Lookup）。海力士也提出过存内加速器AiM\cite{AiM}用于加速AI，与三星的HBM PIM不同的是，AiM基于GDDR6（Graphics Double Data Rate V6）内存，为每个bank装配PIM单元，通过设计互连总线和全局缓存实现各个PIM单元的高效互连。近些年国内的公司阿里巴巴推出过近存计算产品\cite{AlibabaPIM}，同样采用的是3D堆叠技术将逻辑die和数据die堆叠封装在一起，通过TSV高速传输数据。逻辑die上分别设计了用于向量排序和矩阵乘法的计算单元处理不同类型的任务。
 
 \subsection{近存硬件UPMEM}
-然而上述工作因为各种复杂的原因难以落地使用和量产，甚至大部分基于模拟器，使得PIM技术的推广与使用犹如空中楼阁。近几年，一款号称真正可商用的PIM硬件横空出世：UPMEM作为第一款可以商用的近存计算处理器产品\cite{UPMEMHotChips}，有着更加通用的处理能力、高速的内存带宽、低廉的接入成本以及完备的开发生态。UPMEM本身是一条2400MHz的有着标准DDR4内存接口的DIMM插块，可以像正常的内存条一样插在Intel CPU的服务器上。每个双核服务器最多可以插入20条UPMEM（需要为每个CPU留出空余的DIMM插口插入普通的DDR4内存）。如\ref{UPMEMArch}所示，一个UPMEM内存条上有2个rank，每个rank拥有8个chip，每个chip中包含着8个bank，每个DPU（Dram Processing Unit）独占其中一个内存bank。因此一台服务器能够拥有2560个DPU并行处理任务。
+然而上述工作因为各种复杂的原因难以落地使用和量产，甚至大部分基于模拟器，使得PIM技术的推广与使用犹如空中楼阁。近几年，一款号称真正可商用的PIM硬件横空出世：UPMEM作为第一款可以商用的近存计算处理器产品\cite{UPMEMHotChips}，有着更加通用的处理能力、高速的内存带宽、低廉的接入成本以及完备的开发生态。UPMEM本身是一条2400MHz的有着标准DDR4内存接口的DIMM插块，可以像正常的内存条一样插在Intel CPU的服务器上。每个双路服务器最多可以插入20条UPMEM（需要为每个CPU留出空余的DIMM插口插入普通的DDR4内存）。如\ref{UPMEMArch}所示，一个UPMEM内存条上有2个rank，每个rank拥有8个chip，每个chip中包含着8个bank，每个DPU（Dram Processing Unit）独占其中一个内存bank。因此一台服务器能够拥有$20\times 2\times 8\times 8 = 2560$个DPU并行处理任务。
 
 \begin{figure}[!htbp]
 	\centering
-    \includegraphics[width=0.9\textwidth]{figures/UPMEMArch.png}
+    \includegraphics[width=0.9\textwidth]{figures/UPMEMArch.pdf}
     \caption{UPMEM硬件架构}
 	\label{UPMEMArch}
 \end{figure}
@@ -155,6 +154,4 @@ UPMEM在硬件的基础上开发了一套完整的软件栈和工具链方便开
 UPMEM的高并行和细粒度控制特性使得其非常适合用于AI和神经网络的场景。有相当一部分工作使用UPMEM加速神经网络的推理。Zarif等人\cite{UPMEMEmbeddingLookups}将UPMEM用于卸载巨大嵌入标的嵌入查找（Embedding Table Lookup）任务，加速效果尤为明显。Gómez-Luna等人\cite{UPMEMTraditionalML}将机器学习中经典的模型和算法卸载到了UPMEM上，包括线性回归、逻辑回归、决策树、K均值聚类，并对其分别测试了准确性、性能和扩展性，结果表明UPMEM相对于CPU有巨大提升，与GPU几乎持平。Das等人\cite{UPMEMCNN}在UPMEM上分别卸载了嵌入二值神经网络（Embedded Binary Neural Network ，eBNN）和高度量化的卷积神经网络YOLOv3，使用查找表消除乘除计算，这种极低bit量化在小模型上表现优异，但是不一定适用于大模型。Giannoula等人\cite{UPMEMGNN}将图神经网络（Graph Neural Network，GNN）的推理卸载到了UPMEM上，测试结果表明对于稀疏图和较为内存瓶颈的场景中，UPMEM的推理效率提升非常大。PIM-DL\cite{PIM-DL}使用UPMEM推理Bert，使用聚类算法构建向量乘以矩阵的查找表，通过对输入向量的子空间切分对查找表进行降维，从而消除GEMV算子为最近邻查找和向量加法，提高了计算效率。最近也开始有研究者尝试使用UPMEM加速神经网络的训练过程。Gogineni等人\cite{SwiftRL}提出SwiftRL以解决强化学习（Reinforce Learning，RL）中的内存瓶颈问题，将Tabular Q-learning和SARSA（State-Action-Reward-State-Action）等强化学习算法在UPMEM上实现，并适应不同应用场景。Rhyner等人\cite{PIM-Opt}希望在UPMEM实现分布式随机梯度下降算法（Stochastic Gradient Descent，SGD）探究UPMEM的AI训练能力和硬件特点。上述两个训练工作的结果都表明只有在内存瓶颈的应用场景下，UPMEM的训练性能提升较大，而且由于训练过程中存在跨节点通信，扩展性较差无法随数据规模线性扩展。
 
 \section{本章小结}
-本章详细地对大模型推理加速的相关技术和论文做了详尽的介绍，从大模型的发展历程和模型结构的分析，了解大模型的推理成本很高，明白了加速推理的关键因素在于解决内存瓶颈或者提升基本算子的性能。随后介绍了模型量化的基本原理，以及用于加速大模型以缓解内存瓶颈的相关工作。然后对大模型推理阶段的基本算子矩阵向量乘做了基本的介绍，并阐述了相关的优化方法。
-
-随后主要介绍了近存计算研究现状。首先梳理的近存计算的历史，包括近存计算的产生原因、发展和现状，一并介绍了其中具有代表性的工作。然后着重介绍了号称第一款可商用的近存计算的硬件UPMEM，包括其硬件微架构和软件栈，同时结合相关测评工作说明了改硬件的基本特性。最后详细地介绍了基于UPMEM硬件上做的相关科研工作，涉及生物基因、数据库和机器学习等诸多领域，对研究现状有了充分的认识。
+本章首先详细地对大模型推理加速的技术和论文做了详尽介绍，从大模型的发展历程和模型结构的分析，了解大模型的推理成本很高，明白了加速推理的关键因素在于解决内存瓶颈或者提升基本算子的性能。随后介绍了模型量化的基本原理，以及用于加速大模型以缓解内存瓶颈的相关工作。然后对大模型推理阶段的基本算子矩阵向量乘做了基本介绍，并阐述了相关优化方法。本章还主要介绍了近存计算研究现状。首先梳理的近存计算的发展历程，包括近存计算的产生原因、发展和现状。然后着重介绍了第一款可商用的近存计算的硬件UPMEM，包括其硬件微架构和软件栈，同时结合相关测评工作说明了改硬件的基本特性。最后详细地介绍了基于UPMEM硬件上做的相关科研工作，涉及生物基因、数据库和机器学习等诸多领域，对研究现状有了充分的认识。

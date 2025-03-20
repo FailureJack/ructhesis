@@ -19,17 +19,17 @@ GPU的硬件装配在CPU平台上，由于通过PCIE接口连接而并不影响�
 			\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 				\hline \multirow{2}{*}{硬件平台} & \multirow{2}{*}{$\begin{array}{l}\text {制程}\end{array}$} & \multicolumn{3}{|c|}{处理核心} & \multicolumn{2}{|c|}{内存} & \multirow{2}{*}{功耗} \\
 				\cline{3-7} ~ & ~ & $\begin{array}{l}\text {核心数}\end{array}$ & 工作频率 & $\begin{array}{l}\text{峰值性能}\end{array}$ & $\begin{array}{l}\text{容量}\end{array}$ & $\begin{array}{l}\text {总带宽}\end{array}$ & ~\\
-				\hline Intel Xeon 6242 CPU& $14 \mathrm{~nm}$ & $16(32$ threads $)$ & $2.8 \mathrm{GHz}$ & 89.6 GFLOPS\tnote{1} & $255.9 \mathrm{~GB}$ \tnote{2} & $256 \mathrm{~GB} / \mathrm{s}$ & $150 \mathrm{~W}$ \\
+				\hline Intel Xeon 6242 CPU& $14 \mathrm{~nm}$ & $16$ & $2.8 \mathrm{GHz}$ & 89.6 GFLOPS & $255.9 \mathrm{~GB}$ & $256 \mathrm{~GB} / \mathrm{s}$ & $150 \mathrm{~W}$ \\
 				\hline NVIDIA A6000 GPU& $8 \mathrm{~nm}$ & $\begin{array}{l}10752\end{array}$ & $1.41 \mathrm{GHz}$ & $38.7$ TFLOPS & $48 \mathrm{~GB}$ & $768 \mathrm{~GB} / \mathrm{s}$ & $300 \mathrm{~W}$ \\
-				\hline UPMEM& $2 \mathrm{x}\;\mathrm{nm}$ & $2560$ & $400 \mathrm{MHz}$ & 1024 GOPS\tnote{3} & $160 \mathrm{~GB}$ & $1.7 \mathrm{~TB} / \mathrm{s}$ & $256 \mathrm{~W}$\tnote{4} \\
+				\hline UPMEM& $2 \mathrm{x}\;\mathrm{nm}$ & $2560$ & $400 \mathrm{MHz}$ & 1024 GOPS & $160 \mathrm{~GB}$ & $1.7 \mathrm{~TB} / \mathrm{s}$ & $256 \mathrm{~W}$ \\
 				\hline
 			\end{tabular}
-			\begin{tablenotes}
-				\item[1] $2.8GHz \times 16\;cores \times 2 \;inst \;per \;cycle = 89.6 GFLOPS$
-				\item[2] $2666MHz\times 64\div 8 Byte \times 6 = 127.968GB/s$
-				\item[3] $400MHz \times 2560\;cores \times 1 \;inst \;per \;cycle = 1024 GOPS$
-				\item[4] $12.8W \;per \;DIMM \times 20 = 256W$
-			\end{tablenotes}
+			% \begin{tablenotes}
+			% 	\item[1] $2.8GHz \times 16\;cores \times 2 \;inst \;per \;cycle = 89.6 GFLOPS$
+			% 	\item[2] $2666MHz\times 64\div 8 Byte \times 6 = 127.968GB/s$
+			% 	\item[3] $400MHz \times 2560\;cores \times 1 \;inst \;per \;cycle = 1024 GOPS$
+			% 	\item[4] $12.8W \;per \;DIMM \times 20 = 256W$
+			% \end{tablenotes}
 		\end{threeparttable}
 	}
 \end{table}
@@ -43,7 +43,7 @@ GPU的硬件装配在CPU平台上，由于通过PCIE接口连接而并不影响�
 \section{基于近存计算硬件平台实验测试与分析}
 
 \subsection{总吞吐对比测试}
-我们定义GEMV算子的吞吐为每秒操作运算次数(Operations Per Second, FLOPS)来衡量，对于矩阵尺寸为$M\times N$的GEMV算子来说，具体的计算公式为\ref{GOPsEqu}，其中$M\times N$的矩阵中的每个元素都要进行一次乘法和加法，因此是两次操作；ExecuteTime为GEMV算子的多次连续执行的平均耗时，单位为秒。图\ref{EXP1-1}分别显示了在近存计算平台（UPMEM）、CPU平台和GPU平台上的GEMV算子运算性能，UPMEM使用了全部2560个DPU，每个DPU配置16个tasklet进行了计算。
+我们定义GEMV算子的吞吐为每秒操作运算次数(Operations Per Second, FLOPS)来衡量，对于矩阵尺寸为$M\times N$的GEMV算子来说，具体的计算公式为\ref{GOPsEqu}，其中$M\times N$的矩阵中的每个元素都要进行一次乘法和加法，因此是两次操作；ExecuteTime为GEMV算子的多次连续执行的平均耗时，单位为秒。图\ref{EXP1-1}分别显示了在近存计算平台（UPMEM）、CPU平台和GPU平台上的GEMV算子运算性能，UPMEM使用了全部2560个DPU，每个DPU配置16个tasklet，LUT-W-R算法配置子矩阵大小为$32\times 512$。
 
 \begin{equation}
     Throughput=\frac{2\times M\times N}{ExecuteTime}\times 10^{-9}\; GOPS
@@ -53,7 +53,7 @@ GPU的硬件装配在CPU平台上，由于通过PCIE接口连接而并不影响�
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/Exp1-1.pdf}
-    \caption{不同平台算法下GEMV算子的总吞吐}
+    \caption{不同平台及算法下GEMV总吞吐}
 	\label{EXP1-1}
 \end{figure}
 
@@ -81,16 +81,17 @@ GPU的硬件装配在CPU平台上，由于通过PCIE接口连接而并不影响�
 \begin{figure}[htbp!]
 	\centering
 	\subfigure[能效比实验]{
-		\includegraphics[width=0.45\linewidth]{figures/Exp1-2-1.pdf}
+		\includegraphics[width=0.9\linewidth]{figures/Exp1-2-1.pdf}
 		\label{EXP1-2:1}}
+	\\
 	\subfigure[瓶颈分析]{
-		\includegraphics[width=0.45\linewidth]{figures/Exp1-2-2.pdf}
+		\includegraphics[width=0.9\linewidth]{figures/Exp1-2-2.pdf}
         \label{EXP1-2:2}}
 	\label{EXP1-2}
-	\caption{不同平台算法下GEMV算子能效比和瓶颈分析}
+	\caption{不同平台及算法下GEMV能效比和瓶颈分析}
 \end{figure}
 
-同时与第四章的实验\ref{BottleneckTable}类似，在这里补充并完善了UPMEM平台下各种算法的计算利用率和内存带宽利用率的数据如图\ref{EXP1-2:2}所示。此前已分析过CPU平台和GPU平台都是内存瓶颈，再看UPMEM平台的各种算法，IPC都相当之高而内存带宽利用率不超过50\%，是非常明显的计算瓶颈的表现，这意味着在UPMEM这种近存平台编程或者加速应用需要转变此前的冯诺依曼架构计算机的编程定式，就是减少访存，在近存平台上访存变得更加的“便宜”，我们往往需要用访存换计算。
+同时在这里对第四章的表\ref{BottleneckTable}的进行数据补充，完善了UPMEM平台下各种算法的计算利用率和内存带宽利用率的数据如图\ref{EXP1-2:2}所示，此时矩阵的大小为$4096\times 4096$，设置16个Tasklets，LUT-W-R算法配置子矩阵大小为$32\times 64$。此前已分析过CPU平台和GPU平台都是内存瓶颈，再看UPMEM平台的各种算法，IPC都相当之高而内存带宽利用率在10\%，是非常明显的计算瓶颈的表现。同时可以看到我们的逐步优化算法会将IPC降低而MBU提高，是非常典型的使用访存减少计算的优化手段，这意味着在UPMEM这种近存平台编程或者加速应用需要转变此前的冯诺依曼架构计算机的编程定式，就是减少访存，在近存平台上访存变得更加的“便宜”，我们往往需要用访存换计算。
 
 此外可以看到在UPMEM平台上，算法的整体优化方式是符合上面的编程思路的，即用访存换计算，IPC在下降而MBU在逐步上升，这点我们在第四章也做过讨论，比较特殊的点在于LUT-FP4相较于LUT-M，从MRAM读写的字节数量是相同的（FP4仍然用8bit存储减少取数的开销），但是由于LUT-FP4能够执行GEMV内积而LUT-M只能执行GEMV外积导致LUT-FP4的WRAM访问更少，因此运行时间更短，IPC更高且MBU更高。
 
@@ -102,7 +103,7 @@ GPU的硬件装配在CPU平台上，由于通过PCIE接口连接而并不影响�
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/Exp3-1.pdf}
-    \caption{UPMEM平台下各种算法的多线程扩展性测试}
+    \caption{UPMEM平台不同GEMV算法的多线程扩展性测试}
 	\label{EXP3-1} %% label for entire figure 
 \end{figure}
 
@@ -112,35 +113,35 @@ GPU的硬件装配在CPU平台上，由于通过PCIE接口连接而并不影响�
 
 \begin{figure}[htbp!]
 	\centering
-	\subfigure[改变矩阵行]{
+	\subfigure[固定列为4096改变矩阵行]{
 		\includegraphics[width=0.45\linewidth]{figures/Exp3-2-2.pdf}
         \label{EXP3-2:2}}
 	\label{EXP3-2}
-	\subfigure[改变矩阵列]{
+	\subfigure[固定行为4096改变矩阵列]{
 		\includegraphics[width=0.45\linewidth]{figures/Exp3-2-1.pdf}
 		\label{EXP3-2:1}}
-	\caption{UPMEM平台下各种算法矩阵尺寸扩展性测试}
+	\caption{UPMEM平台不同GEMV算法矩阵尺寸扩展性测试}
 \end{figure}
 
-对于改变矩阵的行数来说，如图\ref{EXP3-2:2}，成倍地将矩阵的行数从128翻倍到4096，算子的执行时间基本上是成倍地增加，说明上述的算法对于矩阵的行变化并不敏感。对于改变矩阵的列数来说，如图\ref{EXP3-2:1}，同样的翻倍手段，大部分算法都是符合成倍减少的特性，对列变化不敏感，只有LUT-M和LUT-W-C除外。这两个算法对于列的成倍增加，算法的执行时间并为成倍的增加，而是低于2倍地增加，换句话说，当成倍减少矩阵的列时，LUT-M和LUT-W-C的算法反而会“耗时增加”。其中的原因在于这两个算法都是以行为单位进行同步和计算的，LUT-M和LUT-W-C每次会载入权重矩阵的一行，当列数变小时，结合MRAM的DMA引擎的特点（大批量数据载入带宽更高），DMA的效率就会变差，相对应的执行时间就会变多。同时LUT-W-C的算法的优化了理论在于矩阵一行的所有元素不必都查一次表而只需查256次，通过减少查表的次数来减少访存。当列数变小时，甚至小于256时，LUT-W-C的查表次数反而可能超过未经过优化的查表次数，因此相比于LUT-M，LUT-W-C的“耗时增加”会更严重。此外可以看到LUT-W-R在矩阵尺寸为$4096\times 128$和$4096\times 256$时，二者的执行时间没有变化，是因为此时子矩阵的列的大小大于128和256，二者操作的次数没有本质区别。同时也可也看到随着列数的增加，LUT-W-R的耗时增加倍数稍微超过2，这是因为在列数增加时，子矩阵需要减小尺寸以防止WRAM溢出，越大的子矩阵加速效果越明显。因此可以得出结论，LUT-W-R的算法更加适合行数远大于列数的“窄矩阵”，而LUT-W-C的算法更加适合列数远大于行数的“宽矩阵”。
+对于改变矩阵的行数来说，如图\ref{EXP3-2:2}，成倍地将矩阵的行数从128翻倍到4096，算子的执行时间基本上是成倍地增加，说明上述的算法对于矩阵的行变化并不敏感。对于改变矩阵的列数来说，如图\ref{EXP3-2:1}，同样的翻倍手段，大部分算法都是符合成倍减少的特性，对列变化不敏感，只有LUT-M和LUT-W-C除外。这两个算法对于列的成倍增加，算法的执行时间并为成倍的增加，而是低于2倍地增加，换句话说，当成倍减少矩阵的列时，LUT-M和LUT-W-C的算法反而会“耗时增加”。其中的原因在于这两个算法都是以行为单位进行同步和计算的，LUT-M和LUT-W-C每次会载入权重矩阵的一行，当列数变小时，结合MRAM的DMA引擎的特点（大批量数据载入带宽更高），DMA的效率就会变差，相对应的执行时间就会变多。同时LUT-W-C的算法的优化了理论在于矩阵一行的所有元素不必都查一次表而只需查256次，通过减少查表的次数来减少访存。当列数变小时，甚至小于256时，LUT-W-C的查表次数反而可能超过未经过优化的查表次数，因此相比于LUT-M，LUT-W-C的“耗时增加”会更严重。此外可以看到LUT-W-R在增加矩阵的列时，其执行时间并不是等比增长，而是耗时越来越多，原因在于LUT-W-R算法本身对权重矩阵的行列并不敏感，而是对其分块处理的子矩阵的大小敏感，子矩阵越大执行耗时越少。当增加矩阵的列时，会较为严重地挤占WRAM的空间导致子矩阵的变小，从而需要更多的DMA操作从MRAM中读取数据，从而造成执行耗时增加因此可以得出结论，LUT-W-R的算法更加适合行数远大于列数的“窄矩阵”，而LUT-W-C的算法更加适合列数远大于行数的“宽矩阵”。
 
 \section{基于模拟器平台算法优化测试与分析}
-在真实硬件平台测试后GEMV算子的各项数据后，需要对基于模拟器平台的硬件优化进行测试。我们分别做了两部分的硬件优化，分别是增加了融合查表加法指令集（FLA）和向量指令（SIMD）：使用FLA指令优化第三章提出的几个基于查表的算法LUT-M、LUT-W-C和LUT-W-R；使用SIMD指令优化GEMV朴素内积LUT-FP4的算法，为LUT-SIMD。基于UPMEM周期精确模拟器PIMulator对上述优化进行测试，通过模拟器模拟器的周期数和主频测算算子执行耗时，进而得到算子优化后的吞吐。设置矩阵的尺寸为$4096\times 1024$，设置Tasklet数量为16，具体的加速如图\ref{EXP2-1}所示。
+在真实硬件平台测试后GEMV算子的各项数据后，需要对基于模拟器平台的硬件优化进行测试。我们分别做了两部分的硬件优化，分别是增加了融合查表加法指令集（FLA）和向量指令（SIMD）：使用FLA指令优化第三章提出的几个基于查表的算法LUT-M、LUT-W-C和LUT-W-R；使用SIMD指令优化GEMV朴素内积LUT-FP4的算法，为LUT-SIMD。基于UPMEM周期精确模拟器PIMulator对上述优化进行测试，通过模拟器模拟器的周期数和主频测算算子执行耗时，进而得到算子优化后的吞吐。设置矩阵的尺寸为$4096\times 4096$，设置16个Tasklets，LUT-W-R算法配置子矩阵大小为$32\times 64$。具体的加速如图\ref{EXP2-1}所示。
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/Exp2-1.pdf}
-    \caption{硬件修改的算子吞吐提升}
+    \caption{基于硬件增强的GEMV吞吐提升测试}
 	\label{EXP2-1}
 \end{figure}
 
-对于算法LUT-M、LUT-W-C和LUT-W-R而言，使用了FLA指令集后算子的吞吐提升分别在18.57\%、18\%和0\%，在这里对结果进行解释。对于LUT-M和LUT-W-C两个算法而言，提升大概在20\%左右较为优秀但是没有达到理论预期。在汇编分析的代码段\ref{LUTInstAsm}中，FMA操作的提升普遍在2~3倍，但是上述假设的情况过于理想，没有考虑寄存器的使用限制以及编译优化手段，在真实的算法汇编代码中，能够使用我们设计的查找指令的代码段仅仅在查表指令段一处，并且通过一定的编译优化对指令进行了重排，无法通过人手动地更改整体代码段以达到最佳优化，其结果就是使用我们设计的FLA指令往往只能优化FMA操作中的一条到两条指令，而我们在之前的理论最大算子吞吐的计算过程中展示过，理论上一次FMA操作往往需要消耗UPMEM5条指令，因此优化仅仅达到18\%符合情理。
+对于算法LUT-M、LUT-W-C和LUT-W-R而言，使用了FLA指令集后算子的吞吐提升分别在32.88\%、27.82\%和0\%，在这里对结果进行解释。对于LUT-M和LUT-W-C两个算法而言，提升大概在30\%左右较为优秀但是没有达到理论预期。在汇编分析的代码段\ref{LUTInstAsm}中，FMA操作的提升普遍在2~3倍，但是上述假设的情况过于理想，没有考虑寄存器的使用限制以及编译优化手段，在真实的算法汇编代码中，能够使用我们设计的查找指令的代码段仅仅在查表指令段一处，并且通过一定的编译优化对指令进行了重排，无法通过人手动地更改整体代码段以达到最佳优化，其结果就是使用我们设计的FLA指令往往只能优化FMA操作中的一条到两条指令，而我们在之前的理论最大算子吞吐的计算过程中展示过，理论上一次FMA操作往往需要消耗UPMEM5条指令，因此优化仅仅达到30\%符合情理。
 
-对于算法LUT-W-R而言，我们无法通过汇编代码分析找到任何可以优化的代码段。我们分发下LUT-W-R的算法编译优化非常好，将查表操作的额外开销部分通过指令重排优化掉了，这也是LUT-FP4的执行耗时反而高于LUT-W-R的原因之一。从而导致我们无法直接从汇编代码入手优化算法，因此并无加速效果。其实这也侧面反应出了我们基于指令的优化工作的局限性，我们不应该直接修改编译后的汇编指令，而是在编译器上做修改支持新加入的指令并一起做编译优化。
+对于算法LUT-W-R而言，我们无法通过汇编代码分析找到任何可以优化的代码段。我们分发下LUT-W-R的算法编译优化非常好，将查表操作的额外开销部分通过指令重排优化掉了，从而导致我们无法直接从汇编代码入手优化算法，因此并无加速效果。其实这也侧面反应出了我们基于指令的优化工作的局限性，我们不应该直接修改编译后的汇编指令，而是在编译器上做修改支持新加入的指令并一起做编译优化。
 
 对于使用SIMD指令加速的效果，比较LUT-FP4和LUT-SIMD可以发现，加速效果约为16倍（提升是1479\%差不多就是原来的16倍），这与理论提升高度符合，因为可以一次性向量完成16个元素的查表和加法，同时我们简单地修改了PIMulator模拟器的让其支持向量指令且保证CPI（Cycle Per Instruction）为1，与其他的RISC指令并无明显差异，因此原本16个元素的计算需要16次载入向量、载入矩阵、查表、累加，而使用向量指令后，就变成了1次载入向量、矩阵向量移位、重排、累加（每8次操作载入一次矩阵向量），因此性能提升非常大。
 
 当然我们在模拟器上实现时并未考虑实际的硬件工艺和电路设计是否允许这样的支持，比如是否能够在较小的芯片内集成支持512bit向量计算的向量单元，并且能支持指令的CPI达到1。当然我们可以结合更低bit权重量化的工作减小向量的长度，比如3bit的权重量化只需要256bit的向量运算，而2bit只需要128bit。
 
 \section{本章小结}
-本章对此前的软硬协同优化方案做了充分的测试及结果分析。首先介绍了测试的环境和基本配置，包括所使用的三大硬件平台的基本介绍和硬件配置，测试数据的配置以及对比基线的设置。然后在商用近存计算硬件UPMEM上做了一些的测试和分析，包括对各种基于UPMEM的优化算法的GEMV算子总吞吐测试，对比了CPU和GPU平台的算子吞吐，分析到了UPMEM上GEMV算子强于CPU平台并于GPU平台持平；同时包括对三个硬件平台GEMV计算的能效比测试以及计算平均分析，分析得到近存计算平台UPMEM的能效比高于CPU和GPU平台且GEMV的优化算法表现为计算瓶颈；还包括对GEMV算子的扩展性测试，测试得到此前提出的GEMV算法对于Tasklet有良好的扩展性（不超过11个），而对于矩阵的尺寸大多也同样具有良好的扩展性，其中LUT-M和LUT-W-C算法更适合在行数远小于列数的矩阵上实行，而LUT-W-R则更适合行数远大于列数的矩阵。最后在PIMulator模拟器上测试硬件的修改对于GEMV算子性能的提升，其中增加FLA指令集对于LUT-M和LUT-W-C的提升在18\%左右，增加向量处理单元对于LUT-FP4算法的提升在16倍。
+本章对此前的软硬协同优化方案做了充分的测试及结果分析。首先介绍了测试的环境和基本配置，包括所使用的三大硬件平台的基本介绍和硬件配置，测试数据的配置以及对比基线的设置。然后在商用近存计算硬件UPMEM上做了一些的测试和分析，包括对各种基于UPMEM的优化算法的GEMV算子总吞吐测试，对比了CPU和GPU平台的算子吞吐，分析到了UPMEM上GEMV算子强于CPU平台并于GPU平台持平；同时包括对三个硬件平台GEMV计算的能效比测试以及计算平均分析，分析得到近存计算平台UPMEM的能效比高于CPU和GPU平台且GEMV的优化算法表现为计算瓶颈；还包括对GEMV算子的扩展性测试，测试得到此前提出的GEMV算法对于Tasklet有良好的扩展性（不超过11个），而对于矩阵的尺寸大多也同样具有良好的扩展性，其中LUT-M和LUT-W-C算法更适合在行数远小于列数的矩阵上实行，而LUT-W-R则更适合行数远大于列数的矩阵。最后在PIMulator模拟器上测试硬件的修改对于GEMV算子性能的提升，其中增加FLA指令集对于LUT-M和LUT-W-C的提升在30\%左右，增加向量处理单元对于LUT-FP4算法的提升在16倍。

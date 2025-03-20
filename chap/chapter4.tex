@@ -2,7 +2,6 @@
 本章主要介绍近存计算模拟器的修改硬件优化矩阵向量乘的设计。第一小节是之前的三个软件算法的详细分析。之后介绍新增融合查表加法指令对应矩阵向量乘的优化手段。然后详细介绍通过增加向量单元和指令，向量化计算矩阵向量乘的设计和算法。最后说明上述设计实现的模拟器平台，简要介绍模拟器特性和硬件修改实现方式。
 
 \section{软件优化性能瓶颈分析}
-在上一章提出了三种算法优化后，本小节对每种算法下的矩阵向量乘算子的在近存硬件上的执行情况进行了测试，分别测试其在特定规模和的矩阵和线程配置下的执行时间、周期数以及指令数。我们计算了不同算法的计算利用率（Instructions Per Cycle，IPC）和内存带宽利用率（MRAM Bandwidth Utilization，MBU）。这里MBU的计算公式为\ref{MBUEqu}，MRAMRead是算子执行过程种从MRAM读取的数据（MB），ExecuteTime是算子执行时间（秒），通过此前的工作知道理论带宽大概为628MB/s\cite{BenchmarkingMutlu}），因此可以算出利用率。矩阵仍然采用的是$4096\times 4096$的FP8格式，开启16个Tasklets，在单一DPU上的测试如表\ref{BottleneckTable}所示。
 
 \begin{table}[!htbp]
     \centering
@@ -12,24 +11,26 @@
         \toprule
         算法 & 执行耗时& IPC & MBU \\
         \midrule
-        LUT-M & 698.7\;ms & 92.20\% & 11.88\% \\
-        LUT-W-C & 467.6\;ms &85.86\% & 30.04\% \\
-        LUT-W-R & 298.8\;ms &77.69\% & 50.34\% \\
+        LUT-M & 698.7\;ms & 96.96\% & 3.70\% \\
+        LUT-W-C & 467.6\;ms &84.38\% & 11.66\% \\
+        LUT-W-R & 298.8\;ms &76.97\% & 10.67\% \\
         \bottomrule
     \end{tabular}
 \end{table}
+
+在上一章提出了三种算法优化后，本小节对每种算法下的矩阵向量乘算子的在近存硬件上的执行情况进行了测试，分别测试其在特定规模和的矩阵和线程配置下的执行时间、周期数以及指令数。我们计算了不同算法的计算利用率（Instructions Per Cycle，IPC）和内存带宽利用率（MRAM Bandwidth Utilization，MBU）。这里MBU的计算公式为\ref{MBUEqu}，MRAMRead是算子执行过程种从MRAM读取的数据（MB），ExecuteTime是算子执行时间（秒），通过此前的工作知道理论带宽大概为628MB/s\cite{BenchmarkingMutlu}），因此可以算出利用率。矩阵仍然采用的是$4096\times 4096$的FP8格式，开启16个Tasklets，在单一DPU上的测试如表\ref{BottleneckTable}所示。
 
 \begin{equation}
     MBU=\frac{MRAM\;Read}{ExecuteTime\times 628}\times 100\%
     \label{MBUEqu}
 \end{equation}
 
-可以看到，在三种算法中，从LUT-M、LUT-W-C再到LUT-W-R，我们的IPC是下降的，相应的MBU是上升的，这说明我们在针对WRAM的优化中通过增加MRAM的访存次数来减少WRAM的访存，可以看到执行时间在逐渐降低证明这种优化有效：LUT-M虽然MRAM的访问少但是执行时间长，通过额外访问MRAM获取一些辅助性数据或增加访问MRAM的次数提高寄存器的局部性可以有效的提升算子性能，是一种权衡（trade off）。
+可以看到，在三种算法中，从LUT-M、LUT-W-C再到LUT-W-R，IPC是下降的，相应的MBU是上升的，这说明我们在针对WRAM的优化中通过增加MRAM的访存次数来减少WRAM的访存，可以看到执行时间在逐渐降低证明这种优化有效：LUT-M虽然MRAM的访问少但是执行时间长，通过额外访问MRAM获取一些辅助性数据或增加访问MRAM的次数提高寄存器的局部性可以有效的提升算子性能，是一种权衡（trade off）。
 
-尽管如此，能观察到IPC的值始终在70\%以上，相应地MBU的值没有超过50\%，这充分说明了UPMEM这个硬件平台的特性为计算瓶颈，与传统的冯诺依曼架构不同，访存带宽很快几乎不会成为瓶颈。想要进一步提升算子性能，我们认为仅仅在软件层面做算法的优化十分有限，需要着手与UPMEM硬件结构做出优化，比如为UPMEM增添额外的计算单元和算术能力以增强UPMEM的计算强度。我们这里将不探讨简单的硬件参数修改诸如提高主频、增加浮点单元支持硬件浮点算术计算等等，我们将结合我们的软件算法特点去设计硬件的微架构的更改。
+尽管如此，能观察到IPC的值始终在70\%以上，相应地MBU的值在10\%左右，这充分说明了UPMEM这个硬件平台的特性为计算瓶颈，与传统的冯诺依曼架构不同，UPMEM的访存带宽很快几乎不会成为瓶颈。想要进一步提升算子性能，我们认为仅仅在软件层面做算法的优化十分有限，需要着手与UPMEM硬件结构做出优化，比如为UPMEM增添额外的计算单元和算术能力以增强UPMEM的计算强度。我们这里将不探讨简单的硬件参数修改诸如提高主频、增加浮点单元支持硬件浮点算术计算等等，我们将结合我们的软件算法特点（LUT）去设计硬件的微架构的更改。
 
 \section{基于融合查表加法指令的优化}
-在x86CPU上编程时，如果需要访问数组的某个元素，需要拿到数组的首地址addr和元素索引index，以及每个元素所占字节数为width，通过计算addr+index*width得到真正的内存地址然后再去访存。这种乘加的操作在编译时会做优化，假如数组是连续访问的，那么会优化指令形成地址递增：只有第一次访问数组需要计算乘加，后面访问只需要在地址寄存器累加上width即可。但是UPMEM提供的编译器优化程度不够高，对于连续的数组访问都无法消除乘加操作，因此这里可以设计增加一系列指令专门用于访问数组（查找表），如\ref{LUTInst}所示，分别设计了适用于不同数据位宽的指令，如LHSI（Lookup Halfword Signed by Index），该指令接受dst寄存器、base寄存器、idx寄存器和移位立即数shift：dst寄存器是目标寄存器，base寄存器是数组的首地址，idx寄存器是数组的索引，shift指示的是元素宽度（2byte宽度是移位1位），这条指令的操作就是将idx寄存器的值左移shift位，然后与base寄存器的值相加得到地址addr并访存2个字节，将结果存入dst寄存器（符号位扩展）。这样数组的访问就可以通过这一条指令完成。
+在传统CPU平台上编程时，如果需要访问数组的某个元素，需要拿到数组的首地址addr和元素索引index，以及每个元素所占字节数为width，通过计算addr+index*width得到真正的内存地址然后再去访存。这种乘加的操作在编译时会做优化，假如数组是连续访问的，那么会优化指令形成地址递增：只有第一次访问数组需要计算乘加，后面访问只需要在地址寄存器累加上width即可。但是在上述基于查找表的算法，数组的访问往往不是连续的，无法消除乘加操作，因此这里可以设计增加一系列指令专门用于访问数组（查找表），如\ref{LUTInst}所示，分别设计了适用于不同数据位宽的指令，如LHSI（Lookup Halfword Signed by Index），该指令接受dst寄存器、base寄存器、idx寄存器和移位立即数shift：dst寄存器是目标寄存器，base寄存器是数组的首地址，idx寄存器是数组的索引，shift指示的是元素宽度（2byte宽度是移位1位），这条指令的操作就是将idx寄存器的值左移shift位，然后与base寄存器的值相加得到地址addr并访存2个字节，将结果存入dst寄存器（符号位扩展）。这样数组的访问就可以通过这一条指令完成。
 
 \begin{figure}[!htbp]
 	\centering
@@ -62,31 +63,31 @@
         \includegraphics[width=0.3\linewidth]{figures/asm3-opt.png}
         \label{LUTInstAsm:LUT-W-C-opt}}
 	\label{LUTInstAsm}
-	\caption{矩阵向量乘算法循环语句汇编分析}
+	\caption{不同GEMV算法查表累加语句汇编分析}
 \end{figure}
 
-对三个算法\ref{LUT-M}、\ref{LUT-W-R}、\ref{LUT-W-C}中的最深层循环语句进行汇编分析（参考的UPMEM的指令集）：算法LUT-M对应的是语句\verb|Result[k]+=SubLUT[Vector[j]&0xF][MatRow[k]]|，其指令序列如\ref{LUTInstAsm:LUT-M}所示；算法LUT-W-R对应的是语句\verb|temp+=∗(Offset[l] +SubMat[l][k]*ele_width)|，其指令序列如\ref{LUTInstAsm:LUT-W-R}所示；算法LUT-W-C对应的是语句\verb|Result[IndexRow[l]]+=product|，其指令序列如\ref{LUTInstAsm:LUT-W-C}所示。每做一次数组的访问或者累加操作，至少需要两条甚至以上的指令，现在使用\ref{LUTInst}中所示的指令集对上述汇编代码进行重写，能够得到优化后的汇编代码如\ref{LUTInstAsm:LUT-M-opt}、\ref{LUTInstAsm:LUT-W-R-opt}、\ref{LUTInstAsm:LUT-W-C-opt}所示，指令数目大大减少，由原先的6至8条指令减少到2至4条，由2到3倍的提升；由于最深层循环的循环次数是最多的，主要决定程序的性能，因此理论上使用融合查表加法指令能够对程序有2到3倍的性能提升。
+对算法\ref{LUT-M}、\ref{LUT-W-R}、\ref{LUT-W-C}中查表累加语句进行汇编分析：算法LUT-M对应的是\verb|Result[k]+=SubLUT[Vector[j]&0xF][MatRow[k]]|，其编译指令序列如\ref{LUTInstAsm:LUT-M}所示；算法LUT-W-C对应\verb|Result[IndexRow[l]]+=product|，其指令序列如\ref{LUTInstAsm:LUT-W-C}所示；算法LUT-W-R对应的是语句\verb|temp+=*(Offset[l]+|     \verb|SubMat[l][k]*ele_width)|，其指令序列如\ref{LUTInstAsm:LUT-W-R}所示。每做一次数组的访问或者累加操作，至少需要两条甚至以上的指令，现在使用\ref{LUTInst}中所示的指令集对上述汇编代码进行重写，能够得到优化后的汇编代码如\ref{LUTInstAsm:LUT-M-opt}、\ref{LUTInstAsm:LUT-W-R-opt}、\ref{LUTInstAsm:LUT-W-C-opt}所示，指令数目大大减少，由原先的6至8条指令减少到2至4条，由2到3倍的提升；由于最深层循环的循环次数是最多的，主要决定程序的性能，因此理论上使用融合查表加法指令能够对程序有2到3倍的性能提升。
 
 \section{基于向量指令的查表算法优化}
 SIMD（Single Instruction Multiple Data）是一种特殊的计算模式，即“单指令多数据”，它允许处理器通过一条指令同时对多个数据执行相同的操作，从而显著提高数据处理的效率和性能。在SIMD架构中，处理器执行一条指令，但这条指令会同时作用于多个数据单元，同时执行相同的算术操作，因此SIMD指令非常适用于矩阵和向量的数据计算。Intel是SIMD计算模式的主要推动者之一，为多种架构的处理器配备了SIMD处理单元和对应的指令集\cite{IntelAVX}，SIMD的数据位宽从一开始的128bit逐渐增长到256bit最后到521bit，大大提升了数据处理的效率。
 
-对于更低bit量化，可以为UPMEM增添SIMD指令进行加速。在Intel向量指令集中有：\verb|__m512i _mm512_permutexvar_epi32(__m512i idx, __m512i a)|，它接受两个AVX-512向量，并返回一个AVX-512向量，这些AVX-512向量由16个32位整形数组成，这个函数的作用是：按照index向量中指示的索引将a向量重排，比如index向量中第1个元素值是3，表示会将a向量中第4个元素重排到新向量的第1个位置。值的注意的是index向量中每个int32只用到了最低4bit的数值（确保索引值不超过16）。这种重排与查表操作存在相同之处，查表本身也是给出一张向量（子查找表），读取权重矩阵元素的值作为索引，再去查找表中取得乘积。上述函数中a向量为子查找表，权重矩阵的一行的前16个元素为index向量，相当于使用权重矩阵的值对子查找表做重排，可以一次性查出16个乘积结果。假设权重矩阵数据宽度为4bit，输入向量仍然是8bit的位宽，那么查找表为$256\times 16$的二维数组，仍然展开FP8到int32，那么LUT的每一行就是一个AVX512向量，刚好满足上述指令的条件。
-
-要想使用SIMD计算GEMV，首先需要对权重矩阵进行重新划分，现以Intel的AVX-512向量为例，对于行主存的矩阵，现将其切分成$8\times 16$的子块SubMat如图\ref{SIMD}，对这个子块进行重排，将其转换成一个AVX-512向量:将该AVX-512向量分组，分为16组INT32，将$\text{SubMat[0][0]}$的元素放置到INT32-0的最低四位$[0:4)$，再将$\text{SubMat[1][0]}$的元素放置到INT32-1的$[4:8)$，依次类推，直至遍历完8行，这样就填满了INT32-0，同样的道理，处理SubMat矩阵的第二列，得到INT32-1，当处理完SubMat的所有行和所有列之后，填满了该AVX-512向量。将该向量代替原子矩阵进行存储。完成了所有子块的重排之后，矩阵划分结束，其结果是行数减小到原来的8倍，列数扩大到原来的8倍。这时由于执行的是$8bit\times 4bit$的乘法，查找表的大小为$256\times 16\times 4Byte=16KB$，可以完全载入WRAM，因此可以直接按照GEMV内积的方式计算。
+对于更低bit量化，参考Intel AVX向量指令集增添SIMD指令进行加速：\verb|__m512i _mm512_permutexvar_epi32(__m512i idx, __m512i a)|，接受两个AVX-512向量，并返回一个AVX-512向量，这些AVX-512向量由16个32位整形数组成，这个函数的作用是：按照index向量中指示的索引将a向量重排，比如index向量中第1个元素值是3，表示会将a向量中第4个元素重排到新向量的第1个位置。值的注意的是index向量中每个int32只用到了最低4bit的数值（确保索引值不超过16）。这种重排与查表操作存在相同之处，查表本身也是给出一张向量（子查找表），读取权重矩阵元素的值作为索引，再去查找表中取得乘积。上述函数中a向量为子查找表，权重矩阵的一行的前16个元素为index向量，相当于使用权重矩阵的值对子查找表做重排，可以一次性查出16个乘积结果。假设权重矩阵数据宽度为4bit，输入向量仍然是8bit的位宽，那么查找表为$256\times 16$的二维数组，仍然展开FP8到int32，那么LUT的每一行就是一个AVX512向量，刚好满足上述指令的条件。
 
 \begin{figure}[!htbp]
 	\centering
     \includegraphics[width=0.9\textwidth]{figures/SIMD.pdf}
-	\caption{使用SIMD重排指令的矩阵构建和计算}
+	\caption{基于SIMD指令的矩阵构建和GEMV计算}
     \label{SIMD}
 \end{figure}
+
+要想使用SIMD计算GEMV，首先需要对权重矩阵进行重新划分，现以Intel的AVX-512向量为例，对于行主存的矩阵，现将其切分成$8\times 16$的子块SubMat如图\ref{SIMD}，对这个子块进行重排，将其转换成一个AVX-512向量:将该AVX-512向量分组，分为16组INT32，将$\text{SubMat[0][0]}$的元素放置到INT32-0的最低四位$[0:4)$，再将$\text{SubMat[1][0]}$的元素放置到INT32-1的$[4:8)$，依次类推，直至遍历完8行，这样就填满了INT32-0，同样的道理，处理SubMat矩阵的第二列，得到INT32-1，当处理完SubMat的所有行和所有列之后，填满了该AVX-512向量。将该向量代替原子矩阵进行存储。完成了所有子块的重排之后，矩阵划分结束，其结果是行数减小到原来的8倍，列数扩大到原来的8倍。这时由于执行的是$8bit\times 4bit$的乘法，查找表的大小为$256\times 16\times 4Byte=16KB$，可以完全载入WRAM，因此可以直接按照GEMV内积的方式计算。
 
 具体的计算方式也需要将重排后的权重矩阵从行主存改为列主存，也就是以512bit的粒度进行转置。转置过后，原来一列的元素现在可以按照行访问提高访问效率。再基于DPU内部线程并行化，每个tasklet处理一列均分所有列。具体到单个AVX-512向量，仍然以IntelAVX指令为例，计算仍然以图\ref{SIMD}为例，计算该AVX-512向量时需要先载入对应的子查找表SLUT1到AVX-512向量a中（使用\verb|_mm512_loadu_si512|指令载入寄存器），然后载入权重的AVX-512向量到index寄存器中，执行\verb|_mm512_permutexvar_epi32|操作得到结果，使用\verb|_mm512_add_epi32|指令将其加到累加AVX-512结果寄存器上。然后使用\verb|_mm512_srli_epi32|指令对index向量右移4位，再重复刚才的过程；左移8次后完成整个AVX-512向量的计算，再依次执行该列的所有AVX-512向量的计算，执行完成后再将AVX-512的累加寄存器写到结果向量的对应位置上。不同的tasklet负责不同的列，其对应的结果向量的位置也不同，但是之间互相不干扰无竞争。
 
 \begin{figure}[!htbp]
 	\centering
     \includegraphics[width=0.9\textwidth]{figures/SIMDInst.pdf}
-	\caption{向量指令设计}
+	\caption{向量指令集设计}
     \label{SIMDInst}
 \end{figure}
 
@@ -118,7 +119,7 @@ SIMD（Single Instruction Multiple Data）是一种特殊的计算模式，即�
 
         % 调用二分查找函数
         \State $Result\_8 \gets \textbf{BinarySearch}(Result\_32, MapLUT)$
-        \Comment{\textcolor{blue}{parallel in N for each tasklet}}
+        \Comment{\textcolor{blue}{parallel in N}}
         \State \Return $Result\_8$
     \end{algorithmic}
 \end{algorithm}
@@ -130,7 +131,7 @@ SIMD（Single Instruction Multiple Data）是一种特殊的计算模式，即�
 
 \begin{figure}[!htbp]
 	\centering
-    \includegraphics[width=0.9\textwidth]{figures/PIMulator.png}
+    \includegraphics[width=0.9\textwidth]{figures/PIMulator.pdf}
 	\caption{PIMulator架构图}
     \label{PIMulator}
 \end{figure}
