@@ -1039,3 +1039,19 @@ address = {USA},
 edition = {1st},
 abstract = {Written by high performance computing (HPC) experts, Introduction to High Performance Computing for Scientists and Engineers provides a solid introduction to current mainstream computer architecture, dominant parallel programming models, and useful optimization strategies for scientific HPC. From working in a scientific computing center, the authors gained a unique perspective on the requirements and attitudes of users as well as manufacturers of parallel computers. The text first introduces the architecture of modern cache-based microprocessors and discusses their inherent performance limitations, before describing general optimization strategies for serial code on cache-based architectures. It next covers shared- and distributed-memory parallel computer architectures and the most relevant network topologies. After discussing parallel computing on a theoretical level, the authors show how to avoid or ameliorate typical performance problems connected with OpenMP. They then present cache-coherent nonuniform memory access (ccNUMA) optimization techniques, examine distributed-memory parallel programming with message passing interface (MPI), and explain how to write efficient MPI code. The final chapter focuses on hybrid programming with MPI and OpenMP. Users of high performance computers often have no idea what factors limit time to solution and whether it makes sense to think about optimization at all. This book facilitates an intuitive understanding of performance limitations without relying on heavy computer science knowledge. It also prepares readers for studying more advanced literature.}
 }
+
+@inproceedings{PIMnast,
+author = {Ibrahim, Mohamed Assem and Islam, Mahzabeen and Aga, Shaizeen},
+title = {PIMnast: Balanced Data Placement for GEMV Acceleration with Processing-In-Memory},
+year = {2025},
+publisher = {IEEE Press},
+url = {https://doi.org/10.1109/SCW63240.2024.00137},
+doi = {10.1109/SCW63240.2024.00137},
+abstract = {With unprecedented demand for generative AI (GenAI) inference, acceleration of primitives that dominate GenAI such as general matrix-vector multiplication (GEMV) is receiving considerable attention. A challenge with GEMVs is the high memory bandwidth this primitive demands. Multiple memory vendors have proposed commercially viable processing-in-memory (PIM) prototypes that attain bandwidth boost over processor via augmenting memory banks with compute capabilities and broadcasting same command to all banks. While proposed PIM designs stand to accelerate GEMV, we observe in this work that a key impediment to truly harness PIM acceleration is deducing optimal data-placement to place the matrix in memory banks. To this end, we tease out several factors that impact data-placement and propose PIMnast methodology which, like a gymnast, balances these factors to identify data-placements that deliver GEMV acceleration. Across a spectrum of GenAI models, our proposed PIMnast methodology along with additional orchestration knobs we identify delivers up to 6.86\texttimes{} speedup for GEMVs (of the available 7\texttimes{} roofline speedup) leading to up to 5\texttimes{} speedup for per-token latencies.},
+booktitle = {Proceedings of the SC '24 Workshops of the International Conference on High Performance Computing, Network, Storage, and Analysis},
+pages = {970–981},
+numpages = {12},
+keywords = {GEMV, Generative AI, Processing-in-Memory},
+location = {Atlanta, GA, USA},
+series = {SC-W '24}
+}

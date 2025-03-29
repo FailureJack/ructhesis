@@ -113,6 +113,7 @@ pdfsubject={中国人民大学学位论文}}
 \newcommand{\ruc@clearemptydoublepage}{%
 \clearpage{\pagestyle{empty}\ruc@cleardoublepage}}
 \let\cleardoublepage\ruc@clearemptydoublepage
+% \renewcommand{\cleardoublepage}{\clearpage}
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{}

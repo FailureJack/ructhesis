@@ -174,7 +174,7 @@ def exp_2_1():
     algorithms = ['LUT-M', 'LUT-W-C', 'LUT-W-R', 'LUT-FP4']
     before_opt = [122.9420235,183.6931935,287.4618363,145.6938505]  # 优化前数据
     algorithms_opt = ['LUT-M FLA', 'LUT-W-C FLA', 'LUT-W-R FLA', 'LUT-SIMD']
-    after_opt = [163.3612743, 234.8044279, 287.4618363, 2301.817144]   # 优化后数据
+    after_opt = [140.2985283, 234.8044279, 287.4618363, 2301.817144]   # 优化后数据
 
     # 计算提升倍数和百分比
     improvement = [after / before if after is not None else 1 for before, after in zip(before_opt, after_opt)]
@@ -249,6 +249,86 @@ def exp_2_1():
     # plt.show()
     plt.savefig('./Exp2-1.pdf', format='pdf')
 
+def exp_2_2():
+    # 数据
+    algorithms = ['LUT-M', 'LUT-W-C', 'LUT-W-R', 'LUT-FP4']
+    before_opt = [99.15211704,83.26153716,78.5078334,88.40628288]  # 优化前数据
+    algorithms_opt = ['LUT-M FLA', 'LUT-W-C FLA', 'LUT-W-R FLA', 'LUT-SIMD']
+    after_opt = [116.6419367, 97.14350083, 89.29461206, 1396.730863]   # 优化后数据
+
+    # 计算提升倍数和百分比
+    improvement = [after / before if after is not None else 1 for before, after in zip(before_opt, after_opt)]
+    improvement_percent = [(imp - 1) * 100 for imp in improvement]
+
+    # 创建图表
+    fig, ax1 = plt.subplots(figsize=(12,6))
+
+    # 设置柱状图位置
+    bar_width = 0.35
+    x = np.arange(len(algorithms))
+
+    # 绘制优化前的柱子
+    bars_before = ax1.bar(x - bar_width/2, before_opt, bar_width, label='优化前吞吐', color='skyblue')
+
+    # 绘制优化后的柱子
+    bars_after = ax1.bar(x + bar_width/2, after_opt, bar_width, label='优化后吞吐', color='orange')
+
+    # 在柱子上方标注数值
+    for bar in bars_before:
+        height = bar.get_height()
+        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom')
+
+    for bar in bars_after:
+        height = bar.get_height()
+        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom')
+
+    # 设置左纵轴为对数刻度
+    ax1.set_yscale('log')
+    ax1.set_ylim(64, 1700)
+    ax1.set_yticks([64, 128, 256, 512, 1024])
+    ax1.set_yticklabels([64, 128, 256, 512, 1024])
+
+    # 设置横轴标签，显示 algorithms 和 algorithms_opt，使用换行符分隔
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([f"   {alg}   {alg_opt}" for alg, alg_opt in zip(algorithms, algorithms_opt)])
+
+    # 创建右纵轴
+    ax2 = ax1.twinx()
+
+    # 设置右纵轴为对数刻度
+    ax2.set_yscale('log')
+    ax2.set_ylim(0.5, 32)
+    ax2.set_yticks([1, 2, 4, 8, 16])
+    ax2.set_yticklabels([1, 2, 4, 8, 16])
+
+    # 绘制折线图（优化提升）
+    for i, imp in enumerate(improvement):
+        if imp != 1:  # 仅对有提升的算法绘制折线
+            ax2.plot([x[i] - bar_width/2, x[i] + bar_width/2], [1, imp], marker='o', color='lightcoral', 
+                    markeredgecolor='black', markersize=8, linewidth=2)
+            # 标注提升百分比，位置调整到右侧
+            ax2.text(x[i] + bar_width/2 + 0.05, imp, f'+{improvement_percent[i]:.2f}%', ha='left', va='center', color='black')
+
+    # 添加虚拟折线图用于图例
+    ax2.plot([], [], color='lightcoral', marker='o', markeredgecolor='black', markersize=8, linewidth=2, 
+            label='优化提升')
+
+    # 设置标题和轴标签
+    ax1.set_ylabel('吞吐量 (GOPS)', fontsize=12, fontweight='bold')
+    ax2.set_ylabel('优化提升 (%)', fontsize=12, fontweight='bold')
+
+    # 设置图例
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines + lines2, labels + labels2, loc='upper left')
+
+    # 调整布局
+    plt.tight_layout()
+
+    # 显示图表
+    # plt.show()
+    plt.savefig('./Exp2-2.pdf', format='pdf')
+    
 def exp_3_1():
    # 数据
     tasklets = [1, 2, 4, 8, 16]  # 线程数量
@@ -395,10 +475,11 @@ def exp_3_2_2():
     # plt.show()
     plt.savefig('./Exp3-2-2.pdf', format='pdf')
 
-exp_1_1()
-exp_1_2()
-exp_1_3()
+# exp_1_1()
+# exp_1_2()
+# exp_1_3()
 exp_2_1()
-exp_3_1()
-exp_3_2_1()
-exp_3_2_2()
+exp_2_2()
+# exp_3_1()
+# exp_3_2_1()
+# exp_3_2_2()
