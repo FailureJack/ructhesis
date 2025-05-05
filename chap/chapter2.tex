@@ -12,7 +12,7 @@ GPT模型的结构源于Google在2017年提出的一个基本模型结构Transfo
 \begin{figure}[!htbp]
 	\centering
     \includegraphics[width=0.9\textwidth]{figures/Infer.pdf}
-	\caption{现代主流大模型推理的两个阶段}
+	\caption[现代主流大模型推理的两个阶段]{现代主流大模型推理的两个阶段，重绘自文章\cite{LLMInferSurveyTsingHua}}
     \label{LLMInfer}
 \end{figure}
 
@@ -86,7 +86,7 @@ GEMV的常规计算方式有两种，如图\ref{GEMVBasic}所示，可以类似�
 \begin{figure}[!htbp]
 	\centering
     \includegraphics[width=0.9\textwidth]{figures/3DStack.pdf}
-    \caption{3D堆叠内存结构}
+    \caption[3D堆叠内存结构]{3D堆叠内存结构，重绘自文章\cite{3D-Stack-Fig}}
 	\label{3DStack}
 \end{figure}
 
@@ -98,7 +98,7 @@ GEMV的常规计算方式有两种，如图\ref{GEMVBasic}所示，可以类似�
 \begin{figure}[!htbp]
 	\centering
     \includegraphics[width=0.9\textwidth]{figures/UPMEMArch.pdf}
-    \caption{UPMEM硬件架构}
+    \caption[UPMEM硬件架构]{UPMEM硬件架构，重绘自文章\cite{BenchmarkingMutlu}}
 	\label{UPMEMArch}
 \end{figure}
 
@@ -150,7 +150,7 @@ UPMEM在硬件的基础上开发了一套完整的软件栈和工具链方便开
 
 另外一大类重要的工作专注于利用现有UPMEM硬件去加速不同领域的应用，主要涉及到生物基因、数据库以及人工智能领域。生物基因领域主要是使用UPMEM加速基因测序和基因比对工作\cite{DNAMapping,VariantCalling,RNA-seq,UpPipe,GAPiM}，这类工作的本质是字符串匹配，为内存瓶颈任务，因此适合使用UPMEM硬件进行加速。数据库领域有许多工作对UPMEM关注密切。比如早期的工作\cite{Skyline}将skyline算子卸载到UPMEM。清华的Kang等人做了一系列的工作\cite{PIM-Model,PIM-Tree,PIM-Trie}将数据库常见的索引查询如跳表、前缀树的查询卸载到了UPMEM上，并充分设计了负载均衡算法保证查询速度。一些工作\cite{PIM-DB,PIM-Scan}将数据库最基本的查询算子，全部或部分卸载到了UPMEM上。Baumstark等人\cite{PIM—QueryCompile}将查询计划的优化也卸载到了UPMEM上。Lim等人\cite{PIM-Join}将数据库中的连接查询（Join）卸载到UPMEM上，通过巧妙地移位和排序解决了UPMEM因内存交错（Bank Interleave）带来的数据传输性能损失。
 
-UPMEM的高并行和细粒度控制特性使得其非常适合用于AI和神经网络的场景。有相当一部分工作使用UPMEM加速神经网络的推理。Zarif等人\cite{UPMEMEmbeddingLookups}将UPMEM用于卸载巨型嵌入标的嵌入查找（Embedding Table Lookup）任务，加速效果尤为明显。Gómez-Luna等人\cite{UPMEMTraditionalML}将机器学习中经典的模型和算法卸载到了UPMEM上，包括线性回归、逻辑回归、决策树、K均值聚类，并对其分别测试了准确性、性能和扩展性，结果表明UPMEM相对于CPU有巨大提升，与GPU几乎持平。Das等人\cite{UPMEMCNN}在UPMEM上分别卸载了嵌入二值神经网络（Embedded Binary Neural Network ，eBNN）和高度量化的卷积神经网络YOLOv3，使用查找表消除浮点乘除计算，这种低bit量化在小模型上表现优异，但是不一定适用于大模型。Giannoula等人\cite{UPMEMGNN}将图神经网络（Graph Neural Network，GNN）的推理卸载到了UPMEM上，测试结果表明对于稀疏图和较为内存瓶颈的场景中，UPMEM的推理效率提升非常大。PIM-DL\cite{PIM-DL}使用UPMEM推理Bert，使用聚类算法构建向量乘以矩阵的查找表，通过对输入向量切分子空间以对查找表进行降维，从而消除GEMV算子为最近邻查找和向量加法，提高了计算效率。最近也开始有研究者尝试使用UPMEM加速神经网络的训练过程。Gogineni等人\cite{SwiftRL}提出SwiftRL以解决强化学习（Reinforce Learning，RL）中的内存瓶颈问题，将Tabular Q-learning和SARSA（State-Action-Reward-State-Action）等强化学习算法在UPMEM上实现，并适应不同应用场景。Rhyner等人\cite{PIM-Opt}希望在UPMEM实现分布式随机梯度下降算法（Stochastic Gradient Descent，SGD）探究UPMEM的AI训练能力和硬件特点。上述两个训练工作的结果都表明只有在内存瓶颈的应用场景下，UPMEM的训练性能提升较大，而且由于训练过程中存在跨节点通信，扩展性较差无法随数据规模线性扩展。
+UPMEM的高并行和细粒度控制特性使得其非常适合用于AI和神经网络的场景。有相当一部分工作使用UPMEM加速神经网络的推理。Zarif等人\cite{UPMEMEmbeddingLookups}将UPMEM用于卸载巨型嵌入标的嵌入查找（Embedding Table Lookup）任务，加速效果尤为明显。Gómez-Luna等人\cite{UPMEMTraditionalML}将机器学习中经典的模型和算法卸载到了UPMEM上，包括线性回归、逻辑回归、决策树、K均值聚类，并对其分别测试了准确性、性能和扩展性，结果表明UPMEM相对于CPU有巨大提升，与GPU几乎持平。Das等人\cite{UPMEMCNN}在UPMEM上分别卸载了嵌入二值神经网络（Embedded Binary Neural Network ，eBNN）和高度量化的卷积神经网络YOLOv3，使用查找表消除浮点乘除计算，这种低bit量化在小模型上表现优异，但是不一定适用于大模型。Giannoula等人\cite{UPMEMGNN}将图神经网络（Graph Neural Network，GNN）的推理卸载到了UPMEM上，测试结果表明对于稀疏图和较为内存瓶颈的场景中，UPMEM的推理效率提升非常大。PIM-DL\cite{PIM-DL}使用UPMEM推理Bert，使用聚类算法构建向量乘以矩阵的查找表，通过对输入向量切分子空间以对查找表进行降维，从而消除GEMV算子为最近邻查找和向量加法，提高了计算效率。最近也开始有研究者尝试使用UPMEM加速神经网络的训练过程。Gogineni等人\cite{SwiftRL}提出SwiftRL以解决强化学习（Reinforcement Learning，RL）中的内存瓶颈问题，将Tabular Q-learning和SARSA（State-Action-Reward-State-Action）等强化学习算法在UPMEM上实现，并适应不同应用场景。Rhyner等人\cite{PIM-Opt}希望在UPMEM实现分布式随机梯度下降算法（Stochastic Gradient Descent，SGD）探究UPMEM的AI训练能力和硬件特点。上述两个训练工作的结果都表明只有在内存瓶颈的应用场景下，UPMEM的训练性能提升较大，而且由于训练过程中存在跨节点通信，扩展性较差无法随数据规模线性扩展。
 
 \section{本章小结}
 本章首先详细地对大模型推理加速的技术和论文做了详尽介绍，从大模型的发展历程和模型结构的分析，了解大模型的推理成本很高，明白了加速推理的关键因素在于解决内存瓶颈或者提升基本算子的性能。随后介绍了模型量化的基本原理，以及用于加速大模型以缓解内存瓶颈的相关工作。然后对大模型推理阶段的基本算子矩阵向量乘做了基本介绍，并阐述了相关优化方法。本章还主要介绍了近存计算研究现状。首先梳理的近存计算的发展历程，包括近存计算的产生原因、发展和现状。然后着重介绍了第一款可商用的近存计算的硬件UPMEM，包括其硬件架构和软件栈，同时结合相关测评工作说明了改硬件的基本特性。最后详细地介绍了基于UPMEM硬件上做的相关科研工作，涉及生物基因、数据库和机器学习等诸多领域，对研究现状有了充分的认识。
