@@ -109,11 +109,11 @@ pdfsubject={中国人民大学学位论文}}
 \linespread{1.35}\selectfont
 \fi
 }
-\let\ruc@cleardoublepage\cleardoublepage
-\newcommand{\ruc@clearemptydoublepage}{%
-\clearpage{\pagestyle{empty}\ruc@cleardoublepage}}
-\let\cleardoublepage\ruc@clearemptydoublepage
-% \renewcommand{\cleardoublepage}{\clearpage}
+% \let\ruc@cleardoublepage\cleardoublepage
+% \newcommand{\ruc@clearemptydoublepage}{%
+% \clearpage{\pagestyle{empty}\ruc@cleardoublepage}}
+% \let\cleardoublepage\ruc@clearemptydoublepage
+\renewcommand{\cleardoublepage}{\clearpage}
 \pagestyle{fancy}
 \fancyhf{}
 \lhead{}
