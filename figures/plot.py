@@ -10,6 +10,13 @@ figsize_main=(8,4)
 figsize_sub=(8,4)
 
 def exp_1_1():
+    plt.rcParams["font.size"] = 15  # 默认字体大小
+    plt.rcParams["axes.titlesize"] = 15  # 标题字体大小
+    plt.rcParams["axes.labelsize"] = 15  # 坐标轴标签字体大小
+    plt.rcParams["xtick.labelsize"] = 13  # x轴刻度字体大小
+    plt.rcParams["ytick.labelsize"] = 13  # y轴刻度字体大小
+    plt.rcParams["legend.fontsize"] = 12  # 图例字体大小
+    
     # 数据
     devices = ['MKL', 'cuBlas', 'UPMEM-FP32', 'LUT-M', 'LUT-W-C','LUT-W-R',  'LUT-FP4']
     throughputs = [24.14528848, 365.8131084, 8.224560152, 98.57806193, 118.1539588,354.4696776,  145.4954436]
@@ -29,18 +36,18 @@ def exp_1_1():
     ax1.set_xticklabels(devices, ha='center', color='black')  # 设置为水平显示
 
     # 设置左Y轴（吞吐量）
-    ax1.set_ylabel('吞吐量 (GOPS)', color='black',fontsize=14, fontweight='bold')
+    ax1.set_ylabel('吞吐量 (GOPS)', color='black',fontweight='bold')
     ax1.set_ylim(0, 450)  # 调整Y轴范围
     ax1.tick_params(axis='y', labelcolor='black')
 
     # 创建右Y轴并绘制加速比（折线图）
     ax2 = ax1.twinx()
-    ax2.set_ylabel('加速比', color='black',fontsize=14, fontweight='bold')
+    ax2.set_ylabel('加速比', color='black',fontweight='bold')
     lines = ax2.plot(index[2:], speedups[2:], 'o-', color='salmon', label='加速比')
 
     # 标注加速比（仅标注 LUT-InnerFP32 及其后续设备/方法）
     for i in range(2, len(devices)):
-        ax2.text(index[i], speedups[i] + 0.1, f'x{speedups[i]:.1f}', ha='left', va='top', color='black',fontsize=12, fontweight='bold')
+        ax2.text(index[i], speedups[i] + 0.1, f'x{speedups[i]:.1f}', ha='right', va='top', color='black', fontweight='bold')
 
     # 添加水平虚线（理论上限）
     theoretical_limit = 381
@@ -68,6 +75,12 @@ def exp_1_1():
     plt.savefig('./Exp1-1.pdf', format='pdf')
 
 def exp_1_2():
+    plt.rcParams["font.size"] = 18  # 默认字体大小
+    plt.rcParams["axes.titlesize"] = 18  # 标题字体大小
+    plt.rcParams["axes.labelsize"] = 18  # 坐标轴标签字体大小
+    plt.rcParams["xtick.labelsize"] = 15  # x轴刻度字体大小
+    plt.rcParams["ytick.labelsize"] = 15  # y轴刻度字体大小
+    plt.rcParams["legend.fontsize"] = 18  # 图例字体大小
     # 数据（示例）
     devices = ['MKL', 'cuBlas', 'UPMEM-FP32', 'LUT-M', 'LUT-W-C','LUT-W-R',  'LUT-FP4']
     efficiencies = [1, 7.575248244, 0.19958669, 2.392209279, 2.867260638, 8.601971224, 3.530760733]  # 归一化效率 (GOPS/W)
@@ -89,23 +102,22 @@ def exp_1_2():
     # 标注柱状图数值（字体调大并加粗）
     for i, efficiency in enumerate(efficiencies):
         ax.text(index[i], efficiency + 0.2, f'{efficiency:.1f}', ha='center', va='bottom', 
-                color='black', fontsize=12, fontweight='bold')
+                color='black', fontweight='bold')
 
     # 设置X轴
     ax.set_xticks(index)
-    ax.set_xticklabels(devices, fontsize=10)
+    ax.set_xticklabels(devices)
 
     # 设置Y轴
-    ax.set_ylabel('能效比 (GOPS/W)', fontsize=12, fontweight='bold')
+    ax.set_ylabel('能效比 (GOPS/W)', fontweight='bold')
     ax.set_ylim(0, max(efficiencies) * 1.2)  # Y轴范围根据最大值动态调整
 
     # 添加水平实线（CPU基准）
     ax.axhline(y=cpu_efficiency, color='skyblue', linestyle='-', label='CPU基准能效比')
-    ax.text(-0.5, cpu_efficiency, '1', color='black', va='center', ha='center', 
-            fontsize=10, fontweight='bold')
+    ax.text(-0.5, cpu_efficiency, '1', color='black', va='center', ha='center', fontweight='bold')
 
     # 添加图例
-    ax.legend(loc='upper left', fontsize=10)
+    ax.legend(loc='upper left')
 
     # 美化图表
     ax.grid(True, linestyle='--', alpha=0.7)
@@ -116,6 +128,12 @@ def exp_1_2():
     plt.savefig('./Exp1-2-1.pdf', format='pdf')
 
 def exp_1_3():
+    plt.rcParams["font.size"] = 15  # 默认字体大小
+    plt.rcParams["axes.titlesize"] = 18  # 标题字体大小
+    plt.rcParams["axes.labelsize"] = 18  # 坐标轴标签字体大小
+    plt.rcParams["xtick.labelsize"] = 15  # x轴刻度字体大小
+    plt.rcParams["ytick.labelsize"] = 15  # y轴刻度字体大小
+    plt.rcParams["legend.fontsize"] = 18  # 图例字体大小
     # 数据准备
     lut_types = ['UPMEM-FP32', 'LUT-FP4', 'LUT-M', 'LUT-W-C', 'LUT-W-R']
     ipc = [0.96588065, 0.997993581, 0.96958947, 0.843769578, 0.769674711]
@@ -129,7 +147,7 @@ def exp_1_3():
     fig, ax1 = plt.subplots(figsize=figsize_sub)
 
     # 设置横轴和左纵轴（IPC）
-    ax1.set_ylabel('计算利用率(IPC, %)', color='black', fontsize=12, fontweight='bold')
+    ax1.set_ylabel('计算利用率(IPC, %)', color='black', fontweight='bold')
     ax1.plot(lut_types, ipc_percent, color='skyblue', label='IPC', 
             marker='o', markeredgecolor='black', markerfacecolor='skyblue')
     ax1.tick_params(axis='y', labelcolor='black')
@@ -141,7 +159,7 @@ def exp_1_3():
 
     # 创建右纵轴（Mem Utilization）
     ax2 = ax1.twinx()
-    ax2.set_ylabel('内存带宽利用率(MBU, %)', color='black', fontsize=12, fontweight='bold')
+    ax2.set_ylabel('内存带宽利用率(MBU, %)', color='black', fontweight='bold')
     ax2.plot(lut_types, mem_util_percent, color='orange', label='MBU', 
             marker='s', markeredgecolor='black', markerfacecolor='orange')
     ax2.tick_params(axis='y', labelcolor='black')
@@ -170,6 +188,12 @@ def exp_1_3():
     plt.savefig('./Exp1-2-2.pdf', format='pdf')
 
 def exp_2_1():
+    plt.rcParams["font.size"] = 18  # 默认字体大小
+    plt.rcParams["axes.titlesize"] = 18  # 标题字体大小
+    plt.rcParams["axes.labelsize"] = 20  # 坐标轴标签字体大小
+    plt.rcParams["xtick.labelsize"] = 15  # x轴刻度字体大小
+    plt.rcParams["ytick.labelsize"] = 15  # y轴刻度字体大小
+    plt.rcParams["legend.fontsize"] = 20  # 图例字体大小
     # 数据
     algorithms = ['LUT-M', 'LUT-W-C', 'LUT-W-R', 'LUT-FP4']
     before_opt = [122.9420235,183.6931935,287.4618363,145.6938505]  # 优化前数据
@@ -196,11 +220,11 @@ def exp_2_1():
     # 在柱子上方标注数值
     for bar in bars_before:
         height = bar.get_height()
-        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom')
+        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom', fontweight='bold')
 
     for bar in bars_after:
         height = bar.get_height()
-        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom')
+        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom', fontweight='bold')
 
     # 设置左纵轴为对数刻度
     ax1.set_yscale('log')
@@ -234,8 +258,8 @@ def exp_2_1():
             label='优化提升')
 
     # 设置标题和轴标签
-    ax1.set_ylabel('吞吐量 (GOPS)', fontsize=12, fontweight='bold')
-    ax2.set_ylabel('优化提升 (%)', fontsize=12, fontweight='bold')
+    ax1.set_ylabel('吞吐量 (GOPS)', fontweight='bold')
+    ax2.set_ylabel('优化提升 (%)', fontweight='bold')
 
     # 设置图例
     lines, labels = ax1.get_legend_handles_labels()
@@ -276,11 +300,11 @@ def exp_2_2():
     # 在柱子上方标注数值
     for bar in bars_before:
         height = bar.get_height()
-        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom')
+        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='top', fontweight='bold')
 
     for bar in bars_after:
         height = bar.get_height()
-        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='bottom')
+        ax1.text(bar.get_x() + bar.get_width() / 2, height, f'{height:.2f}', ha='center', va='top', fontweight='bold')
 
     # 设置左纵轴为对数刻度
     ax1.set_yscale('log')
@@ -314,8 +338,8 @@ def exp_2_2():
             label='优化提升')
 
     # 设置标题和轴标签
-    ax1.set_ylabel('吞吐量 (GOPS)', fontsize=12, fontweight='bold')
-    ax2.set_ylabel('优化提升 (%)', fontsize=12, fontweight='bold')
+    ax1.set_ylabel('吞吐量 (GOPS)', fontweight='bold')
+    ax2.set_ylabel('优化提升 (%)', fontweight='bold')
 
     # 设置图例
     lines, labels = ax1.get_legend_handles_labels()
@@ -330,6 +354,12 @@ def exp_2_2():
     plt.savefig('./Exp2-2.pdf', format='pdf')
     
 def exp_3_1():
+    plt.rcParams["font.size"] = 15  # 默认字体大小
+    plt.rcParams["axes.titlesize"] = 18  # 标题字体大小
+    plt.rcParams["axes.labelsize"] = 18  # 坐标轴标签字体大小
+    plt.rcParams["xtick.labelsize"] = 15  # x轴刻度字体大小
+    plt.rcParams["ytick.labelsize"] = 15  # y轴刻度字体大小
+    plt.rcParams["legend.fontsize"] = 15  # 图例字体大小
    # 数据
     tasklets = [1, 2, 4, 8, 16]  # 线程数量
     data = {
@@ -345,7 +375,7 @@ def exp_3_1():
     markers = ['o', 's', '^', 'D', 'x']  # 圆圈、正方形、三角形、菱形、叉形
 
     # 创建图形
-    plt.figure(figsize=figsize_main)
+    plt.figure(figsize=(8,5))
 
     # 绘制每条折线
     for i, (algo, times) in enumerate(data.items()):
@@ -371,13 +401,19 @@ def exp_3_1():
     plt.ylabel('执行时间(ms)')
 
     # 添加图例
-    plt.legend()
+    plt.legend(loc='upper right')
 
     # 显示图形
     # plt.show()
     plt.savefig('./Exp3-1.pdf', format='pdf')
 
 def exp_3_2_1():
+    plt.rcParams["font.size"] = 15  # 默认字体大小
+    plt.rcParams["axes.titlesize"] = 20  # 标题字体大小
+    plt.rcParams["axes.labelsize"] = 20  # 坐标轴标签字体大小
+    plt.rcParams["xtick.labelsize"] = 18  # x轴刻度字体大小
+    plt.rcParams["ytick.labelsize"] = 15  # y轴刻度字体大小
+    plt.rcParams["legend.fontsize"] = 18  # 图例字体大小
     # 数据
     columns = [128, 256, 512, 1024, 2048, 4096]  # x 轴数据
     data = {
@@ -393,7 +429,7 @@ def exp_3_2_1():
     markers = ['o', 's', '^', 'D', 'x']  # 圆圈、正方形、三角形、菱形、叉形
 
     # 创建图形
-    plt.figure(figsize=figsize_sub)
+    plt.figure(figsize=(8,6))
 
     # 绘制每条折线
     for i, (algo, times) in enumerate(data.items()):
@@ -442,7 +478,7 @@ def exp_3_2_2():
     markers = ['o', 's', '^', 'D', 'x']  # 圆圈、正方形、三角形、菱形、叉形
 
     # 创建图形
-    plt.figure(figsize=figsize_sub)
+    plt.figure(figsize=(8,6))
 
     # 绘制每条折线
     for i, (algo, times) in enumerate(data.items()):
@@ -475,11 +511,11 @@ def exp_3_2_2():
     # plt.show()
     plt.savefig('./Exp3-2-2.pdf', format='pdf')
 
-# exp_1_1()
-# exp_1_2()
-# exp_1_3()
+exp_1_1()
+exp_1_2()
+exp_1_3()
 exp_2_1()
 exp_2_2()
-# exp_3_1()
-# exp_3_2_1()
-# exp_3_2_2()
+exp_3_1()
+exp_3_2_1()
+exp_3_2_2()
